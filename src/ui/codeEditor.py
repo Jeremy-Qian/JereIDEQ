@@ -1,7 +1,8 @@
 from PySide6.QtWidgets import QPlainTextEdit, QTextEdit
 from PySide6.QtCore import Qt, QRect
-from PySide6.QtGui import QColor, QPainter, QTextFormat, QFont
+from PySide6.QtGui import QPainter, QTextFormat, QFont, QColor
 from ui.lineNumber import LineNumberArea
+from const.theme import EDITOR_FONT_FAMILY, EDITOR_FONT_SIZE, LINE_NUMBER_BG, LINE_NUMBER_TEXT, CURRENT_LINE_BG
 
 
 class QCodeEditor(QPlainTextEdit):
@@ -9,7 +10,7 @@ class QCodeEditor(QPlainTextEdit):
         super().__init__(parent)
         self.line_number_area = LineNumberArea(self)
 
-        font = QFont("Monaco", 11)
+        font = QFont(EDITOR_FONT_FAMILY, EDITOR_FONT_SIZE)
         font.setStyleHint(QFont.Monospace)
         self.setFont(font)
 
@@ -50,8 +51,7 @@ class QCodeEditor(QPlainTextEdit):
         extra_selections = []
         if not self.isReadOnly():
             selection = QTextEdit.ExtraSelection()
-            line_color = QColor(Qt.yellow).lighter(190)
-            selection.format.setBackground(line_color)
+            selection.format.setBackground(QColor(CURRENT_LINE_BG))
             selection.format.setProperty(QTextFormat.FullWidthSelection, True)
             selection.cursor = self.textCursor()
             selection.cursor.clearSelection()
@@ -60,7 +60,7 @@ class QCodeEditor(QPlainTextEdit):
 
     def lineNumberAreaPaintEvent(self, event):
         painter = QPainter(self.line_number_area)
-        painter.fillRect(event.rect(), Qt.lightGray)
+        painter.fillRect(event.rect(), QColor(LINE_NUMBER_BG))
 
         block = self.firstVisibleBlock()
         block_number = block.blockNumber()
@@ -70,7 +70,7 @@ class QCodeEditor(QPlainTextEdit):
         while block.isValid() and top <= event.rect().bottom():
             if block.isVisible() and bottom >= event.rect().top():
                 number = str(block_number + 1)
-                painter.setPen(Qt.black)
+                painter.setPen(QColor(LINE_NUMBER_TEXT))
                 painter.drawText(0, top, self.line_number_area.width() - 5, self.fontMetrics().height(),
                               Qt.AlignRight, number)
 
