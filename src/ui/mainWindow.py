@@ -26,6 +26,7 @@ class MainWindow(QMainWindow):
 
         self.setup_menu()
         self.current_file = None
+        self.is_untitled = True
         self.original_content = ""
         self.editor.textChanged.connect(self.on_text_changed)
 
@@ -56,6 +57,7 @@ class MainWindow(QMainWindow):
     def new_file(self):
         self.editor.clear()
         self.current_file = None
+        self.is_untitled = True
         self.original_content = ""
         self.setWindowTitle("JereIDE - untitled")
         self.setWindowFilePath("")
@@ -63,6 +65,11 @@ class MainWindow(QMainWindow):
     def on_text_changed(self):
         is_modified = self.editor.toPlainText() != self.original_content
         self.setWindowModified(is_modified)
+        file_name = os.path.basename(self.current_file) if self.current_file else "untitled"
+        if is_modified:
+            self.setWindowTitle(f"JereIDE - {file_name} *")
+        else:
+            self.setWindowTitle(f"JereIDE - {file_name}")
 
     def open_file(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "Open File", "", "Text Files (*.txt);;Python Files (*.py);;All Files (*)")
@@ -71,9 +78,10 @@ class MainWindow(QMainWindow):
                 with open(file_path, 'r', encoding='utf-8') as f:
                     self.editor.setPlainText(f.read())
                 self.current_file = file_path
+                self.is_untitled = False
                 self.original_content = self.editor.toPlainText()
                 self.setWindowFilePath(file_path)
-                self.setWindowTitle(f"JereIDE - {os.path.basename(file_path)}[*]")
+                self.setWindowTitle(f"JereIDE - {os.path.basename(file_path)}")
             except Exception as e:
                 QMessageBox.critical(self, "Error", f"Could not open file: {e}")
 
@@ -86,15 +94,16 @@ class MainWindow(QMainWindow):
                 self.setWindowModified(False)
             except Exception as e:
                 QMessageBox.critical(self, "Error", f"Could not save file: {e}")
-        else:
+        elif self.is_untitled:
             self.save_as_file()
 
     def save_as_file(self):
         file_path, _ = QFileDialog.getSaveFileName(self, "Save File As", "", "Text Files (*.txt);;Python Files (*.py);;All Files (*)")
         if file_path:
             self.current_file = file_path
+            self.is_untitled = False
             self.setWindowFilePath(file_path)
             self.save_file()
-            self.setWindowTitle(f"JereIDE - {os.path.basename(file_path)}*")
+            self.setWindowTitle(f"JereIDE - {os.path.basename(file_path)}")
             self.original_content = self.editor.toPlainText()
             self.setWindowModified(False)
