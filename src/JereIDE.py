@@ -1,3 +1,4 @@
+# Entry Point
 import sys
 from PySide6.QtWidgets import QApplication
 from ui.mainWindow import MainWindow
