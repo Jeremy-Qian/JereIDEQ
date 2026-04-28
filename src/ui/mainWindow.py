@@ -25,6 +25,8 @@ class MainWindow(QMainWindow):
 
         self.setup_menu()
         self.current_file = None
+        self.original_content = ""
+        self.editor.textChanged.connect(self.on_text_changed)
 
     def setup_menu(self):
         menu_bar = self.menuBar()
@@ -53,7 +55,12 @@ class MainWindow(QMainWindow):
     def new_file(self):
         self.editor.clear()
         self.current_file = None
+        self.original_content = ""
         self.setWindowTitle("JereIDE")
+
+    def on_text_changed(self):
+        is_modified = self.editor.toPlainText() != self.original_content
+        self.setWindowModified(is_modified)
 
     def open_file(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "Open File", "", "Text Files (*.txt);;Python Files (*.py);;All Files (*)")
@@ -62,6 +69,7 @@ class MainWindow(QMainWindow):
                 with open(file_path, 'r', encoding='utf-8') as f:
                     self.editor.setPlainText(f.read())
                 self.current_file = file_path
+                self.original_content = self.editor.toPlainText()
                 self.setWindowTitle(f"JereIDE - {os.path.basename(file_path)}")
             except Exception as e:
                 QMessageBox.critical(self, "Error", f"Could not open file: {e}")
@@ -71,6 +79,8 @@ class MainWindow(QMainWindow):
             try:
                 with open(self.current_file, 'w', encoding='utf-8') as f:
                     f.write(self.editor.toPlainText())
+                self.original_content = self.editor.toPlainText()
+                self.setWindowModified(False)
             except Exception as e:
                 QMessageBox.critical(self, "Error", f"Could not save file: {e}")
         else:
@@ -82,3 +92,5 @@ class MainWindow(QMainWindow):
             self.current_file = file_path
             self.save_file()
             self.setWindowTitle(f"JereIDE - {os.path.basename(file_path)}")
+            self.original_content = self.editor.toPlainText()
+            self.setWindowModified(False)
