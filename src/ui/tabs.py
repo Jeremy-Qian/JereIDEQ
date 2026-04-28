@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from PySide6.QtCore import Qt, Signal
-from PySide6.QtGui import QPainter, QColor, QMouseEvent, QPaintEvent
+from PySide6.QtCore import Qt, Signal, QRect
+from PySide6.QtGui import QPainter, QColor, QMouseEvent, QPaintEvent, QFontMetrics
 from PySide6.QtWidgets import (
     QHBoxLayout,
     QStackedWidget,
@@ -32,26 +32,36 @@ class JereIDETab(QWidget):
         self.index = index
         self.is_selected = False
         self._is_close_hovered = False
+        self._is_tab_hovered = False
+        self._text_right = 0
 
         self.setFixedHeight(30)
-        self.setMinimumWidth(120)
         self.setMouseTracking(True)
+        self._update_width()
+
+    def _update_width(self):
+        fm = QFontMetrics(self.font())
+        text_width = fm.horizontalAdvance(self.label)
+        self.setMinimumWidth(text_width + 50)
+
+    def set_label(self, label: str):
+        self.label = label
+        self._update_width()
+        self.update()
 
     @property
     def _close_button_rect(self):
-        """Calculate the close button rectangle."""
-        width = self.width()
         height = self.height()
-        close_x = width - 20
-        close_y = (height // 2) - 5
-        from PySide6.QtCore import QRect
-        return QRect(close_x, close_y, 10, 10)
+        close_y = (height // 2) - 4
+        gap = (self.width() - self._text_right) // 2
+        return QRect(self._text_right + gap, close_y, 8, 8)
+
+
 
     @property
     def _close_hover_rect(self):
         """Calculate the hover-sensitive area for the close button."""
         rect = self._close_button_rect
-        from PySide6.QtCore import QRect
         return QRect(rect.x() - 3, rect.y() - 3, rect.width() + 6, rect.height() + 6)
 
     def paintEvent(self, event: QPaintEvent) -> None:
@@ -65,8 +75,15 @@ class JereIDETab(QWidget):
         painter.setPen(QColor(TAB_BORDER))
         painter.drawRect(0, 0, width - 1, height - 1)
 
+        fm = QFontMetrics(self.font())
+        text_width = fm.horizontalAdvance(self.label)
+        min_left_padding = 21
+        text_x = min_left_padding
+
         painter.setPen(QColor(TAB_TEXT))
-        painter.drawText(10, (height // 2) + 4, self.label)
+        painter.drawText(text_x, (height // 2) + 4, self.label)
+
+        self._text_right = text_x + text_width
 
         if self._is_close_hovered:
             hover_rect = self._close_hover_rect
@@ -74,16 +91,18 @@ class JereIDETab(QWidget):
             painter.setPen(Qt.PenStyle.NoPen)
             painter.drawRoundedRect(hover_rect, 3, 3)
 
-        close_rect = self._close_button_rect
-        painter.setPen(QColor(TAB_TEXT))
-        painter.drawLine(
-            close_rect.x(), close_rect.y(),
-            close_rect.x() + close_rect.width(), close_rect.y() + close_rect.height()
-        )
-        painter.drawLine(
-            close_rect.x() + close_rect.width(), close_rect.y(),
-            close_rect.x(), close_rect.y() + close_rect.height()
-        )
+        if self._is_tab_hovered:
+            close_rect = self._close_button_rect
+            inset = 2
+            painter.setPen(QColor(TAB_TEXT))
+            painter.drawLine(
+                close_rect.x() + inset, close_rect.y() + inset,
+                close_rect.x() + close_rect.width() - inset, close_rect.y() + close_rect.height() - inset
+            )
+            painter.drawLine(
+                close_rect.x() + close_rect.width() - inset, close_rect.y() + inset,
+                close_rect.x() + inset, close_rect.y() + close_rect.height() - inset
+            )
         painter.end()
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
@@ -94,13 +113,16 @@ class JereIDETab(QWidget):
                 self.clicked.emit(self.index)
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
-        was_hovered = self._is_close_hovered
+        was_close_hovered = self._is_close_hovered
+        was_tab_hovered = self._is_tab_hovered
         self._is_close_hovered = self._close_hover_rect.contains(event.pos())
-        if was_hovered != self._is_close_hovered:
+        self._is_tab_hovered = True
+        if was_close_hovered != self._is_close_hovered or was_tab_hovered != self._is_tab_hovered:
             self.update()
 
     def leaveEvent(self, event) -> None:
         self._is_close_hovered = False
+        self._is_tab_hovered = False
         self.update()
 
 
@@ -161,8 +183,7 @@ class JereIDEBook(QWidget):
     def SetPageText(self, index: int, title: str) -> bool:
         """Set the title of the tab at the given index."""
         if 0 <= index < len(self._tabs):
-            self._tabs[index].label = title
-            self._tabs[index].update()
+            self._tabs[index].set_label(title)
             return True
         return False
 
