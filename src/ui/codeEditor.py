@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QPlainTextEdit, QTextEdit
-from PySide6.QtCore import Qt, QRegularExpression
+from PySide6.QtCore import Qt, QRect, QRegularExpression
 from PySide6.QtGui import QPainter, QTextFormat, QFont, QColor, QSyntaxHighlighter, QTextCharFormat, QBrush
 from ui.lineNumber import LineNumberArea
 from const.theme import EDITOR_FONT_FAMILY, EDITOR_FONT_SIZE, LINE_NUMBER_BG, LINE_NUMBER_TEXT, CURRENT_LINE_BG
