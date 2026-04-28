@@ -17,6 +17,8 @@ class QCodeEditor(QPlainTextEdit):
         font.setStyleHint(QFont.Monospace)
         self.setFont(font)
 
+        self.setTabStopDistance(4 * self.fontMetrics().horizontalAdvance(' '))
+
         # Apply Python syntax highlighting
         self.syntax_highlighter = PythonSyntaxHighlighter(self.document())
 
