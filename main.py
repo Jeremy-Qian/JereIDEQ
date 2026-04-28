@@ -1,7 +1,7 @@
 import sys
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QPlainTextEdit, QTextEdit,
-    QWidget, QVBoxLayout, QFileDialog, QMessageBox, QFrame, QLabel, QHBoxLayout
+    QWidget, QVBoxLayout, QFileDialog, QMessageBox, QFrame, QHBoxLayout
 )
 from PySide6.QtCore import Qt, QRect, QSize, Slot
 from PySide6.QtGui import QColor, QPainter, QTextFormat, QFont
@@ -118,15 +118,11 @@ class MainWindow(QMainWindow):
         self.editor = QCodeEditor()
         layout.addWidget(self.editor)
 
-        # Simple QFrame as a status bar
         self.status_bar_frame = QFrame()
-        self.status_bar_frame.setFrameShape(QFrame.StyledPanel)
-        self.status_bar_frame.setFrameShadow(QFrame.Sunken)
-        self.status_bar_frame.setFixedHeight(25)
+        self.status_bar_frame.setFixedHeight(24)
+        self.status_bar_frame.setStyleSheet("background-color: #f5f5f5;")
 
-        # Optional: layout inside the frame if you want to add text later
-        status_layout = QHBoxLayout(self.status_bar_frame)
-        status_layout.setContentsMargins(5, 0, 5, 0)
+        layout.addWidget(self.status_bar_frame)
 
         layout.addWidget(self.status_bar_frame)
         self.setCentralWidget(container)
@@ -190,6 +186,9 @@ class MainWindow(QMainWindow):
             self.current_file = file_path
             self.save_file()
             self.setWindowTitle(f"Code Editor - {file_path}")
+
+    def update_status(self, message):
+        pass
 
 
 if __name__ == "__main__":
