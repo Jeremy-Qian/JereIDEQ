@@ -74,11 +74,11 @@ class PythonSyntaxHighlighter(QSyntaxHighlighter):
         pattern = QRegularExpression(r'#.*')
         self._highlighting_rules.append((pattern, comment_fmt))
 
-        # Triple-quoted strings (docstrings)
+        # Triple-quoted strings (docstrings) - handled as single line for simplicity
         triple_quote_fmt = self._create_format(SYNTAX_STRING)
-        pattern = QRegularExpression(r'""".*?"""', QRegularExpression.MultilineCapture)
+        pattern = QRegularExpression(r'""".*"""')
         self._highlighting_rules.append((pattern, triple_quote_fmt))
-        pattern = QRegularExpression(r"'''.*?'''", QRegularExpression.MultilineCapture)
+        pattern = QRegularExpression(r"'''.*'''")
         self._highlighting_rules.append((pattern, triple_quote_fmt))
 
         # Double-quoted strings
@@ -89,14 +89,6 @@ class PythonSyntaxHighlighter(QSyntaxHighlighter):
         # Single-quoted strings
         pattern = QRegularExpression(r"'(?:[^'\\]|\\.)*'")
         self._highlighting_rules.append((pattern, string_fmt))
-
-        # Triple-double-quoted strings (raw)
-        pattern = QRegularExpression(r'""".*?"""')
-        self._highlighting_rules.append((pattern, triple_quote_fmt))
-
-        # Triple-single-quoted strings (raw)
-        pattern = QRegularExpression(r"'''.*?'''")
-        self._highlighting_rules.append((pattern, triple_quote_fmt))
 
         # Numbers (integers and floats)
         number_fmt = self._create_format(SYNTAX_NUMBER)
