@@ -8,6 +8,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("JereIDE")
+        self.setWindowFilePath("")
         self.resize(800, 600)
 
         container = QWidget()
@@ -57,6 +58,7 @@ class MainWindow(QMainWindow):
         self.current_file = None
         self.original_content = ""
         self.setWindowTitle("JereIDE")
+        self.setWindowFilePath("")
 
     def on_text_changed(self):
         is_modified = self.editor.toPlainText() != self.original_content
@@ -70,7 +72,8 @@ class MainWindow(QMainWindow):
                     self.editor.setPlainText(f.read())
                 self.current_file = file_path
                 self.original_content = self.editor.toPlainText()
-                self.setWindowTitle(f"JereIDE - {os.path.basename(file_path)}")
+                self.setWindowFilePath(file_path)
+                self.setWindowTitle(f"JereIDE - {os.path.basename(file_path)}[*]")
             except Exception as e:
                 QMessageBox.critical(self, "Error", f"Could not open file: {e}")
 
@@ -90,7 +93,8 @@ class MainWindow(QMainWindow):
         file_path, _ = QFileDialog.getSaveFileName(self, "Save File As", "", "Text Files (*.txt);;Python Files (*.py);;All Files (*)")
         if file_path:
             self.current_file = file_path
+            self.setWindowFilePath(file_path)
             self.save_file()
-            self.setWindowTitle(f"JereIDE - {os.path.basename(file_path)}")
+            self.setWindowTitle(f"JereIDE - {os.path.basename(file_path)}[*]")
             self.original_content = self.editor.toPlainText()
             self.setWindowModified(False)
