@@ -32,6 +32,7 @@ class JereIDETab(QWidget):
         self.index = index
         self.is_selected = False
         self._is_close_hovered = False
+        self._is_tab_hovered = False
 
         self.setFixedHeight(30)
         self.setMinimumWidth(120)
@@ -74,16 +75,17 @@ class JereIDETab(QWidget):
             painter.setPen(Qt.PenStyle.NoPen)
             painter.drawRoundedRect(hover_rect, 3, 3)
 
-        close_rect = self._close_button_rect
-        painter.setPen(QColor(TAB_TEXT))
-        painter.drawLine(
-            close_rect.x(), close_rect.y(),
-            close_rect.x() + close_rect.width(), close_rect.y() + close_rect.height()
-        )
-        painter.drawLine(
-            close_rect.x() + close_rect.width(), close_rect.y(),
-            close_rect.x(), close_rect.y() + close_rect.height()
-        )
+        if self._is_tab_hovered:
+            close_rect = self._close_button_rect
+            painter.setPen(QColor(TAB_TEXT))
+            painter.drawLine(
+                close_rect.x(), close_rect.y(),
+                close_rect.x() + close_rect.width(), close_rect.y() + close_rect.height()
+            )
+            painter.drawLine(
+                close_rect.x() + close_rect.width(), close_rect.y(),
+                close_rect.x(), close_rect.y() + close_rect.height()
+            )
         painter.end()
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
@@ -94,13 +96,16 @@ class JereIDETab(QWidget):
                 self.clicked.emit(self.index)
 
     def mouseMoveEvent(self, event: QMouseEvent) -> None:
-        was_hovered = self._is_close_hovered
+        was_close_hovered = self._is_close_hovered
+        was_tab_hovered = self._is_tab_hovered
         self._is_close_hovered = self._close_hover_rect.contains(event.pos())
-        if was_hovered != self._is_close_hovered:
+        self._is_tab_hovered = True
+        if was_close_hovered != self._is_close_hovered or was_tab_hovered != self._is_tab_hovered:
             self.update()
 
     def leaveEvent(self, event) -> None:
         self._is_close_hovered = False
+        self._is_tab_hovered = False
         self.update()
 
 
