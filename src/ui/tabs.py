@@ -43,10 +43,10 @@ class JereIDETab(QWidget):
         """Calculate the close button rectangle."""
         width = self.width()
         height = self.height()
-        close_x = width - 20
-        close_y = (height // 2) - 5
+        close_x = width - 16
+        close_y = (height // 2) - 4
         from PySide6.QtCore import QRect
-        return QRect(close_x, close_y, 10, 10)
+        return QRect(close_x, close_y, 8, 8)
 
     @property
     def _close_hover_rect(self):
