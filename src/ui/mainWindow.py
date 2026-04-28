@@ -6,7 +6,7 @@ from ui.statusBar import StatusBar
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("PySide6 Simple Code Editor")
+        self.setWindowTitle("JereIDE")
         self.resize(800, 600)
 
         container = QWidget()
@@ -52,7 +52,7 @@ class MainWindow(QMainWindow):
     def new_file(self):
         self.editor.clear()
         self.current_file = None
-        self.setWindowTitle("PySide6 Simple Code Editor")
+        self.setWindowTitle("JereIDE")
 
     def open_file(self):
         file_path, _ = QFileDialog.getOpenFileName(self, "Open File", "", "Text Files (*.txt);;Python Files (*.py);;All Files (*)")
@@ -61,7 +61,7 @@ class MainWindow(QMainWindow):
                 with open(file_path, 'r', encoding='utf-8') as f:
                     self.editor.setPlainText(f.read())
                 self.current_file = file_path
-                self.setWindowTitle(f"Code Editor - {file_path}")
+                self.setWindowTitle(f"JereIDE - {file_path}")
             except Exception as e:
                 QMessageBox.critical(self, "Error", f"Could not open file: {e}")
 
@@ -80,4 +80,4 @@ class MainWindow(QMainWindow):
         if file_path:
             self.current_file = file_path
             self.save_file()
-            self.setWindowTitle(f"Code Editor - {file_path}")
+            self.setWindowTitle(f"JereIDE - {file_path}")
