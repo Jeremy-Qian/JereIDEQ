@@ -93,14 +93,15 @@ class JereIDETab(QWidget):
 
         if self._is_tab_hovered:
             close_rect = self._close_button_rect
+            inset = 2
             painter.setPen(QColor(TAB_TEXT))
             painter.drawLine(
-                close_rect.x(), close_rect.y(),
-                close_rect.x() + close_rect.width(), close_rect.y() + close_rect.height()
+                close_rect.x() + inset, close_rect.y() + inset,
+                close_rect.x() + close_rect.width() - inset, close_rect.y() + close_rect.height() - inset
             )
             painter.drawLine(
-                close_rect.x() + close_rect.width(), close_rect.y(),
-                close_rect.x(), close_rect.y() + close_rect.height()
+                close_rect.x() + close_rect.width() - inset, close_rect.y() + inset,
+                close_rect.x() + inset, close_rect.y() + close_rect.height() - inset
             )
         painter.end()
 
