@@ -7,7 +7,7 @@ from ui.statusBar import StatusBar
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("JereIDE")
+        self.setWindowTitle("JereIDE - untitled")
         self.setWindowFilePath("")
         self.resize(800, 600)
 
@@ -57,7 +57,7 @@ class MainWindow(QMainWindow):
         self.editor.clear()
         self.current_file = None
         self.original_content = ""
-        self.setWindowTitle("JereIDE")
+        self.setWindowTitle("JereIDE - untitled")
         self.setWindowFilePath("")
 
     def on_text_changed(self):
@@ -95,6 +95,6 @@ class MainWindow(QMainWindow):
             self.current_file = file_path
             self.setWindowFilePath(file_path)
             self.save_file()
-            self.setWindowTitle(f"JereIDE - {os.path.basename(file_path)}[*]")
+            self.setWindowTitle(f"JereIDE - {os.path.basename(file_path)}*")
             self.original_content = self.editor.toPlainText()
             self.setWindowModified(False)
