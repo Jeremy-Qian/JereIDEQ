@@ -31,7 +31,7 @@ class QCodeEditor(QPlainTextEdit):
         self.line_number_area = LineNumberArea(self)
 
         # Set a monospaced font
-        font = QFont("Courier New", 11)
+        font = QFont("Monaco", 11)
         font.setStyleHint(QFont.Monospace)
         self.setFont(font)
 
