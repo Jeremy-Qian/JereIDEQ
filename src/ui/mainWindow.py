@@ -1,3 +1,4 @@
+import os
 from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QFileDialog, QMessageBox
 from ui.codeEditor import QCodeEditor
 from ui.statusBar import StatusBar
@@ -61,7 +62,7 @@ class MainWindow(QMainWindow):
                 with open(file_path, 'r', encoding='utf-8') as f:
                     self.editor.setPlainText(f.read())
                 self.current_file = file_path
-                self.setWindowTitle(f"JereIDE - {file_path}")
+                self.setWindowTitle(f"JereIDE - {os.path.basename(file_path)}")
             except Exception as e:
                 QMessageBox.critical(self, "Error", f"Could not open file: {e}")
 
@@ -80,4 +81,4 @@ class MainWindow(QMainWindow):
         if file_path:
             self.current_file = file_path
             self.save_file()
-            self.setWindowTitle(f"JereIDE - {file_path}")
+            self.setWindowTitle(f"JereIDE - {os.path.basename(file_path)}")
