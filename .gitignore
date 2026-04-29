@@ -48,3 +48,5 @@ Thumbs.db
 # Package managers
 Pipfile.lock
 poetry.lock
+
+*test.py
