@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QPlainTextEdit, QTextEdit
 from PySide6.QtCore import Qt, QRect, QRegularExpression
-from PySide6.QtGui import QPainter, QTextFormat, QFont, QColor, QSyntaxHighlighter, QTextCharFormat, QBrush
+from PySide6.QtGui import QPainter, QTextFormat, QFont, QColor, QSyntaxHighlighter, QTextCharFormat, QBrush, QKeyEvent, QTextCursor
 from ui.lineNumber import LineNumberArea
 from utils.syntaxHighlight import PythonSyntaxHighlighter
 from const.theme import EDITOR_FONT_FAMILY, EDITOR_FONT_SIZE, LINE_NUMBER_BG, LINE_NUMBER_TEXT, CURRENT_LINE_BG
@@ -28,6 +28,24 @@ class QCodeEditor(QPlainTextEdit):
 
         self.update_line_number_area_width(0)
         self.highlight_current_line()
+
+    def keyPressEvent(self, event):
+        if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
+            cursor = self.textCursor()
+            block = cursor.block()
+            current_line_text = block.text()
+
+            leading_whitespace = ''
+            for char in current_line_text:
+                if char in ' \t':
+                    leading_whitespace += char
+                else:
+                    break
+
+            cursor.insertText('\n' + leading_whitespace)
+            self.setTextCursor(cursor)
+        else:
+            super().keyPressEvent(event)
 
     def line_number_area_width(self):
         digits = 1
