@@ -9,11 +9,20 @@ from const.theme import SYNTAX_BUILTIN, SYNTAX_DECORATOR, SYNTAX_CLASS_DEF, SYNT
 
 
 class QCodeEditor(QPlainTextEdit):
+    PAIRS = {
+        '(': ')',
+        '[': ']',
+        '{': '}',
+        '"': '"',
+        "'": "'",
+    }
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.line_number_area = LineNumberArea(self)
         self.auto_indent_enabled = True
         self.line_numbers_enabled = True
+        self.auto_pairing_enabled = True
 
         font = QFont(EDITOR_FONT_FAMILY, EDITOR_FONT_SIZE)
         font.setStyleHint(QFont.Monospace)
@@ -32,7 +41,13 @@ class QCodeEditor(QPlainTextEdit):
         self.highlight_current_line()
 
     def keyPressEvent(self, event):
-        if self.auto_indent_enabled and (event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter):
+        key = event.text()
+        if self.auto_pairing_enabled and key in self.PAIRS:
+            cursor = self.textCursor()
+            cursor.insertText(key + self.PAIRS[key])
+            cursor.movePosition(QTextCursor.PreviousCharacter, QTextCursor.MoveAnchor, 1)
+            self.setTextCursor(cursor)
+        elif self.auto_indent_enabled and (event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter):
             cursor = self.textCursor()
             block = cursor.block()
             current_line_text = block.text()
