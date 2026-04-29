@@ -12,6 +12,7 @@ class QCodeEditor(QPlainTextEdit):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.line_number_area = LineNumberArea(self)
+        self.auto_indent_enabled = True
 
         font = QFont(EDITOR_FONT_FAMILY, EDITOR_FONT_SIZE)
         font.setStyleHint(QFont.Monospace)
@@ -30,7 +31,7 @@ class QCodeEditor(QPlainTextEdit):
         self.highlight_current_line()
 
     def keyPressEvent(self, event):
-        if event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter:
+        if self.auto_indent_enabled and (event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter):
             cursor = self.textCursor()
             block = cursor.block()
             current_line_text = block.text()

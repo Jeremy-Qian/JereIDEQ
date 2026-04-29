@@ -20,6 +20,8 @@ class MainWindow(QMainWindow):
         self.notebook = JereIDEBook(None)
         layout.addWidget(self.notebook)
 
+        self.auto_indent_enabled = True
+
         self.status_bar = StatusBar()
         layout.addWidget(self.status_bar)
 
@@ -159,6 +161,13 @@ class MainWindow(QMainWindow):
         exit_action = file_menu.addAction("E&xit")
         exit_action.triggered.connect(self.close)
 
+        options_menu = menu_bar.addMenu("&Options")
+
+        self.auto_indent_action = options_menu.addAction("&Auto Indent")
+        self.auto_indent_action.setCheckable(True)
+        self.auto_indent_action.setChecked(self.auto_indent_enabled)
+        self.auto_indent_action.triggered.connect(self.toggle_auto_indent)
+
     def new_file(self):
         self._create_new_tab()
         idx = self.notebook.GetSelection()
@@ -214,4 +223,10 @@ class MainWindow(QMainWindow):
         idx = self.notebook.GetSelection()
         if 0 <= idx < len(self._tabs_data):
             self._save_as_current_tab(idx)
+
+    def toggle_auto_indent(self):
+        self.auto_indent_enabled = self.auto_indent_action.isChecked()
+        idx = self.notebook.GetSelection()
+        if 0 <= idx < len(self._tabs_data):
+            self._tabs_data[idx]["editor"].auto_indent_enabled = self.auto_indent_enabled
             self.on_tab_changed(idx)
