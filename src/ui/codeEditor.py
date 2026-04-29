@@ -28,6 +28,7 @@ class QCodeEditor(QPlainTextEdit):
         font = QFont(EDITOR_FONT_FAMILY, EDITOR_FONT_SIZE)
         font.setStyleHint(QFont.Monospace)
         self.setFont(font)
+        self.setStyleSheet("QPlainTextEdit { border: none; background-color: white; }")
 
         self.setTabStopDistance(4 * self.fontMetrics().horizontalAdvance(' '))
 

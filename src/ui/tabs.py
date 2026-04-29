@@ -72,8 +72,15 @@ class JereIDETab(QWidget):
         background_color = QColor(TAB_SELECTED_BG) if self.is_selected else QColor(TAB_UNSELECTED_BG)
         painter.fillRect(0, 0, width, height, background_color)
 
-        painter.setPen(QColor(TAB_BORDER))
-        painter.drawRect(0, 0, width - 1, height - 1)
+        if not self.is_selected:
+            painter.setPen(QColor(TAB_BORDER))
+            painter.drawLine(0, height - 1, width - 1, height - 1)
+            painter.drawLine(0, 0, 0, height - 1)
+            painter.drawLine(width, 0, width, height - 1)
+        else:
+            painter.setPen(QColor(TAB_BORDER))
+            painter.drawLine(0, 0, 0, height - 1)
+            painter.drawLine(width, 0, width, height - 1)
 
         fm = QFontMetrics(self.font())
         text_width = fm.horizontalAdvance(self.label)
@@ -134,6 +141,7 @@ class JereIDEBook(QWidget):
 
     def __init__(self, parent: QWidget):
         super().__init__(parent)
+        self.setStyleSheet("QWidget { border: none; }")
         self._tabs: list[JereIDETab] = []
         self._current_selection = -1
 
@@ -144,10 +152,11 @@ class JereIDEBook(QWidget):
         self._tab_bar_widget = QWidget()
         self._tab_bar_layout = QHBoxLayout(self._tab_bar_widget)
         self._tab_bar_layout.setContentsMargins(0, 0, 0, 0)
-        self._tab_bar_layout.setSpacing(2)
+        self._tab_bar_layout.setSpacing(0)
         self._tab_bar_layout.addStretch()
 
         self._stacked_widget = QStackedWidget()
+        self._stacked_widget.setStyleSheet("QStackedWidget { border: none; background-color: white; }")
 
         main_layout.addWidget(self._tab_bar_widget)
         main_layout.addWidget(self._stacked_widget, 1)

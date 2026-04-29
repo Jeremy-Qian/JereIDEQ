@@ -1,8 +1,9 @@
 import os
-from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QFileDialog, QMessageBox
+from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QFileDialog, QMessageBox, QHBoxLayout, QScrollArea, QSplitter
 from ui.codeEditor import QCodeEditor
 from ui.statusBar import StatusBar
 from ui.tabs import JereIDEBook
+from ui.sidebar import Sidebar
 
 
 class MainWindow(QMainWindow):
