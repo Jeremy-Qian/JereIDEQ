@@ -5,7 +5,7 @@ from ui.lineNumber import LineNumberArea
 from utils.syntaxHighlight import PythonSyntaxHighlighter
 from const.theme import EDITOR_FONT_FAMILY, EDITOR_FONT_SIZE, LINE_NUMBER_BG, LINE_NUMBER_TEXT, CURRENT_LINE_BG
 from const.theme import SYNTAX_KEYWORD, SYNTAX_STRING, SYNTAX_NUMBER, SYNTAX_COMMENT
-from const.theme import SYNTAX_BUILTIN, SYNTAX_DECORATOR, SYNTAX_CLASS_DEF, SYNTAX_FUNCTION_DEF
+from const.theme import SYNTAX_BUILTIN, SYNTAX_DECORATOR, SYNTAX_CLASS_DEF, SYNTAX_FUNCTION_DEF, PAIR_HIGHLIGHT
 
 
 class QCodeEditor(QPlainTextEdit):
@@ -23,6 +23,7 @@ class QCodeEditor(QPlainTextEdit):
         self.auto_indent_enabled = True
         self.line_numbers_enabled = True
         self.auto_pairing_enabled = True
+        self._highlighted_pair = None
 
         font = QFont(EDITOR_FONT_FAMILY, EDITOR_FONT_SIZE)
         font.setStyleHint(QFont.Monospace)
@@ -36,6 +37,7 @@ class QCodeEditor(QPlainTextEdit):
         self.blockCountChanged.connect(self.update_line_number_area_width)
         self.updateRequest.connect(self.update_line_number_area)
         self.cursorPositionChanged.connect(self.highlight_current_line)
+        self.cursorPositionChanged.connect(self._on_cursor_moved)
 
         self.update_line_number_area_width(0)
         self.highlight_current_line()
@@ -47,6 +49,7 @@ class QCodeEditor(QPlainTextEdit):
             cursor.insertText(key + self.PAIRS[key])
             cursor.movePosition(QTextCursor.PreviousCharacter, QTextCursor.MoveAnchor, 1)
             self.setTextCursor(cursor)
+            self._highlight_pair_at_cursor()
         elif self.auto_indent_enabled and (event.key() == Qt.Key_Return or event.key() == Qt.Key_Enter):
             cursor = self.textCursor()
             block = cursor.block()
@@ -64,10 +67,79 @@ class QCodeEditor(QPlainTextEdit):
         else:
             super().keyPressEvent(event)
 
+    def _highlight_pair_at_cursor(self):
+        self._highlighted_pair = None
+        cursor = self.textCursor()
+        pos = cursor.position()
+        text = self.toPlainText()
+        
+        if pos < len(text):
+            char = text[pos]
+            if char in self.PAIRS.values():
+                self._find_and_highlight_pair(pos, char)
+            elif char in self.PAIRS:
+                self._find_opening_pair(pos, char)
+        self.highlight_current_line()
+
+    def _find_opening_pair(self, pos, opening_char):
+        closing_char = self.PAIRS[opening_char]
+        text = self.toPlainText()
+        close_pos = text.find(closing_char, pos + 1)
+        
+        while close_pos >= 0:
+            if self._is_unnested(text, pos, close_pos, closing_char, opening_char):
+                break
+            close_pos = text.find(closing_char, close_pos + 1)
+        
+        if close_pos >= 0:
+            self._highlighted_pair = (pos, close_pos)
+
+    def _find_and_highlight_pair(self, pos, closing_char):
+        opening_char = None
+        for o, c in self.PAIRS.items():
+            if c == closing_char:
+                opening_char = o
+                break
+        
+        if not opening_char:
+            return
+        
+        text = self.toPlainText()
+        open_pos = text.rfind(opening_char, 0, pos)
+        
+        while open_pos >= 0:
+            if self._is_unnested(text, open_pos, pos, closing_char, opening_char):
+                break
+            open_pos = text.rfind(opening_char, 0, open_pos)
+        
+        if open_pos >= 0:
+            self._highlighted_pair = (open_pos, pos)
+
+    def _is_unnested(self, text, open_pos, close_pos, closing_char, opening_char):
+        stack = []
+        for i in range(open_pos + 1, close_pos):
+            ch = text[i]
+            if ch in self.PAIRS:
+                stack.append(ch)
+            elif ch in self.PAIRS.values():
+                if stack and ((ch == ')' and stack[-1] == '(') or 
+                          (ch == ']' and stack[-1] == '[') or 
+                          (ch == '}' and stack[-1] == '{') or 
+                          (ch == '"' and stack[-1] == '"') or 
+                          (ch == "'" and stack[-1] == "'")):
+                    stack.pop()
+        return opening_char not in stack
+
     def set_line_numbers_enabled(self, enabled: bool):
         self.line_numbers_enabled = enabled
         self.line_number_area.setVisible(enabled)
         self.update_line_number_area_width(0)
+
+    def _on_cursor_moved(self):
+        if not self.auto_pairing_enabled:
+            self._highlighted_pair = None
+            return
+        self._highlight_pair_at_cursor()
 
     def line_number_area_width(self):
         digits = 1
@@ -107,6 +179,18 @@ class QCodeEditor(QPlainTextEdit):
             selection.cursor = self.textCursor()
             selection.cursor.clearSelection()
             extra_selections.append(selection)
+
+            if self._highlighted_pair:
+                open_pos, close_pos = self._highlighted_pair
+                for p in [open_pos, close_pos]:
+                    cursor = QTextCursor(self.document())
+                    cursor.setPosition(p)
+                    cursor.movePosition(QTextCursor.NextCharacter, QTextCursor.KeepAnchor, 1)
+                    selection = QTextEdit.ExtraSelection()
+                    selection.format.setBackground(QColor(PAIR_HIGHLIGHT))
+                    selection.cursor = cursor
+                    extra_selections.append(selection)
+
         self.setExtraSelections(extra_selections)
 
     def lineNumberAreaPaintEvent(self, event):
