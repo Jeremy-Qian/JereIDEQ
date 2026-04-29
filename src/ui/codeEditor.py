@@ -13,6 +13,7 @@ class QCodeEditor(QPlainTextEdit):
         super().__init__(parent)
         self.line_number_area = LineNumberArea(self)
         self.auto_indent_enabled = True
+        self.line_numbers_enabled = True
 
         font = QFont(EDITOR_FONT_FAMILY, EDITOR_FONT_SIZE)
         font.setStyleHint(QFont.Monospace)
@@ -48,6 +49,11 @@ class QCodeEditor(QPlainTextEdit):
         else:
             super().keyPressEvent(event)
 
+    def set_line_numbers_enabled(self, enabled: bool):
+        self.line_numbers_enabled = enabled
+        self.line_number_area.setVisible(enabled)
+        self.update_line_number_area_width(0)
+
     def line_number_area_width(self):
         digits = 1
         max_blocks = max(1, self.blockCount())
@@ -58,7 +64,10 @@ class QCodeEditor(QPlainTextEdit):
         return space
 
     def update_line_number_area_width(self, _):
-        self.setViewportMargins(self.line_number_area_width(), 0, 0, 0)
+        if self.line_numbers_enabled:
+            self.setViewportMargins(self.line_number_area_width(), 0, 0, 0)
+        else:
+            self.setViewportMargins(0, 0, 0, 0)
 
     def update_line_number_area(self, rect, dy):
         if dy:

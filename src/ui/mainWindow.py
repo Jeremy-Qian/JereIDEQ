@@ -21,6 +21,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(self.notebook)
 
         self.auto_indent_enabled = True
+        self.line_numbers_enabled = True
 
         self.status_bar = StatusBar()
         layout.addWidget(self.status_bar)
@@ -168,6 +169,11 @@ class MainWindow(QMainWindow):
         self.auto_indent_action.setChecked(self.auto_indent_enabled)
         self.auto_indent_action.triggered.connect(self.toggle_auto_indent)
 
+        self.line_numbers_action = options_menu.addAction("&Line Numbers")
+        self.line_numbers_action.setCheckable(True)
+        self.line_numbers_action.setChecked(self.line_numbers_enabled)
+        self.line_numbers_action.triggered.connect(self.toggle_line_numbers)
+
     def new_file(self):
         self._create_new_tab()
         idx = self.notebook.GetSelection()
@@ -229,4 +235,10 @@ class MainWindow(QMainWindow):
         idx = self.notebook.GetSelection()
         if 0 <= idx < len(self._tabs_data):
             self._tabs_data[idx]["editor"].auto_indent_enabled = self.auto_indent_enabled
+
+    def toggle_line_numbers(self):
+        self.line_numbers_enabled = self.line_numbers_action.isChecked()
+        idx = self.notebook.GetSelection()
+        if 0 <= idx < len(self._tabs_data):
+            self._tabs_data[idx]["editor"].set_line_numbers_enabled(self.line_numbers_enabled)
             self.on_tab_changed(idx)
