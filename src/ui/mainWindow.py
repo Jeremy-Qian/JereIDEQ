@@ -4,6 +4,7 @@ from ui.codeEditor import QCodeEditor
 from ui.statusBar import StatusBar
 from ui.tabs import JereIDEBook
 from ui.menu import MenuBar
+from ui.welcomeFrame import WelcomeFrame
 
 
 class MainWindow(QMainWindow):
@@ -20,6 +21,10 @@ class MainWindow(QMainWindow):
 
         self.notebook = JereIDEBook(None)
         layout.addWidget(self.notebook)
+        self.notebook.hide()
+
+        self.welcome_frame = WelcomeFrame()
+        layout.addWidget(self.welcome_frame)
 
         self.syntax_highlighting_enabled = True
         self.auto_indent_enabled = True
@@ -43,6 +48,10 @@ class MainWindow(QMainWindow):
         self._create_new_tab()
 
     def _create_new_tab(self, title: str = "untitled", file_path: str | None = None):
+        if self.notebook.GetPageCount() == 0:
+            self.notebook.show()
+            self.welcome_frame.hide()
+
         editor = QCodeEditor()
         self.notebook.AddPage(editor, title)
         tab_index = self.notebook.GetPageCount() - 1
@@ -107,6 +116,11 @@ class MainWindow(QMainWindow):
             self._tabs_data.pop(index)
         for i in range(len(self._tabs_data)):
             self.notebook.SetPageText(i, self._get_tab_title(i))
+
+        if self.notebook.GetPageCount() == 0:
+            self.welcome_frame.show()
+            self.notebook.hide()
+            self.status_bar.update_position(1, 1)
 
     def _get_tab_title(self, index: int):
         if 0 <= index < len(self._tabs_data):
@@ -177,6 +191,10 @@ class MainWindow(QMainWindow):
             except Exception as e:
                 QMessageBox.critical(self, "Error", f"Could not open file: {e}")
                 return
+
+            if self.notebook.GetPageCount() == 0:
+                self.notebook.show()
+                self.welcome_frame.hide()
 
             editor = QCodeEditor()
             title = os.path.basename(file_path)
