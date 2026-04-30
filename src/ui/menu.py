@@ -13,7 +13,49 @@ class MenuBar:
     def setup(self):
         menu_bar = self.window.menuBar()
         self._setup_file_menu(menu_bar)
+        self._setup_edit_menu(menu_bar)
         self._setup_options_menu(menu_bar)
+
+    def _setup_edit_menu(self, menu_bar):
+        edit_menu = menu_bar.addMenu("&Edit")
+
+        undo_action = edit_menu.addAction("&Undo")
+        undo_action.setShortcut("Ctrl+Z")
+        undo_action.triggered.connect(self.window.undo)
+
+        redo_action = edit_menu.addAction("&Redo")
+        redo_action.setShortcut("Ctrl+Y")
+        redo_action.triggered.connect(self.window.redo)
+
+        edit_menu.addSeparator()
+
+        cut_action = edit_menu.addAction("Cu&t")
+        cut_action.setShortcut("Ctrl+X")
+        cut_action.triggered.connect(self.window.cut)
+
+        copy_action = edit_menu.addAction("&Copy")
+        copy_action.setShortcut("Ctrl+C")
+        copy_action.triggered.connect(self.window.copy)
+
+        paste_action = edit_menu.addAction("&Paste")
+        paste_action.setShortcut("Ctrl+V")
+        paste_action.triggered.connect(self.window.paste)
+
+        edit_menu.addSeparator()
+
+        select_all_action = edit_menu.addAction("Select &All")
+        select_all_action.setShortcut("Ctrl+A")
+        select_all_action.triggered.connect(self.window.select_all)
+
+        edit_menu.addSeparator()
+
+        find_action = edit_menu.addAction("&Find...")
+        find_action.setShortcut("Ctrl+F")
+        find_action.triggered.connect(self.window.find)
+
+        replace_action = edit_menu.addAction("&Replace...")
+        replace_action.setShortcut("Ctrl+H")
+        replace_action.triggered.connect(self.window.replace)
 
     def _setup_file_menu(self, menu_bar):
         file_menu = menu_bar.addMenu("&File")

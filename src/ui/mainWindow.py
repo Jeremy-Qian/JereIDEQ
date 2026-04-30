@@ -232,3 +232,54 @@ class MainWindow(QMainWindow):
         idx = self.notebook.GetSelection()
         if 0 <= idx < len(self._tabs_data):
             self._tabs_data[idx]["editor"].set_syntax_highlighting_enabled(self.syntax_highlighting_enabled)
+
+    def _get_current_editor(self):
+        idx = self.notebook.GetSelection()
+        if 0 <= idx < len(self._tabs_data):
+            return self._tabs_data[idx]["editor"]
+        return None
+
+    def undo(self):
+        editor = self._get_current_editor()
+        if editor:
+            editor.undo()
+
+    def redo(self):
+        editor = self._get_current_editor()
+        if editor:
+            editor.redo()
+
+    def cut(self):
+        editor = self._get_current_editor()
+        if editor:
+            editor.cut()
+
+    def copy(self):
+        editor = self._get_current_editor()
+        if editor:
+            editor.copy()
+
+    def paste(self):
+        editor = self._get_current_editor()
+        if editor:
+            editor.paste()
+
+    def select_all(self):
+        editor = self._get_current_editor()
+        if editor:
+            editor.selectAll()
+
+    def find(self):
+        editor = self._get_current_editor()
+        if editor:
+            # QPlainTextEdit has no built-in find dialog, trigger Ctrl+F on the editor
+            from PySide6.QtGui import QKeyEvent
+            from PySide6.QtCore import Qt
+            event = QKeyEvent(QKeyEvent.Type.KeyPress, Qt.Key_F, Qt.ControlModifier, "")
+            editor.keyPressEvent(event)
+
+    def replace(self):
+        # Replace would require a custom dialog - for now just focus the editor
+        editor = self._get_current_editor()
+        if editor:
+            editor.setFocus()
