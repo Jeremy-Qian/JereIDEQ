@@ -12,6 +12,7 @@ from PySide6.QtWidgets import (
 )
 
 from const.theme import (
+    TAB_STRIP_BG,
     TAB_SELECTED_BG,
     TAB_UNSELECTED_BG,
     TAB_BORDER,
@@ -165,6 +166,7 @@ class JereIDEBook(QWidget):
         main_layout.setSpacing(0)
 
         self._tab_bar_widget = QWidget()
+        self._tab_bar_widget.setStyleSheet(f"QWidget {{ background-color: {TAB_STRIP_BG}; }}")
         self._tab_bar_layout = QHBoxLayout(self._tab_bar_widget)
         self._tab_bar_layout.setContentsMargins(0, 0, 0, 0)
         self._tab_bar_layout.setSpacing(0)
