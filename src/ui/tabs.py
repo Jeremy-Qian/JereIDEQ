@@ -31,6 +31,7 @@ class JereIDETab(QWidget):
         self.label = label
         self.index = index
         self.is_selected = False
+        self.is_modified = False
         self._is_close_hovered = False
         self._is_tab_hovered = False
         self._text_right = 0
@@ -44,9 +45,14 @@ class JereIDETab(QWidget):
         text_width = fm.horizontalAdvance(self.label)
         self.setMinimumWidth(text_width + 50)
 
-    def set_label(self, label: str):
+    def set_label(self, label: str, is_modified: bool = False):
         self.label = label
+        self.is_modified = is_modified
         self._update_width()
+        self.update()
+
+    def set_modified(self, modified: bool):
+        self.is_modified = modified
         self.update()
 
     @property
@@ -87,6 +93,10 @@ class JereIDETab(QWidget):
         min_left_padding = 21
         text_x = min_left_padding
 
+        font = self.font()
+        if self.is_modified:
+            font.setItalic(True)
+            painter.setFont(font)
         painter.setPen(QColor(TAB_TEXT))
         painter.drawText(text_x, (height // 2) + 4, self.label)
 
@@ -192,6 +202,13 @@ class JereIDEBook(QWidget):
         """Set the title of the tab at the given index."""
         if 0 <= index < len(self._tabs):
             self._tabs[index].set_label(title)
+            return True
+        return False
+
+    def SetPageModified(self, index: int, modified: bool) -> bool:
+        """Set the modified state of the tab at the given index."""
+        if 0 <= index < len(self._tabs):
+            self._tabs[index].set_modified(modified)
             return True
         return False
 

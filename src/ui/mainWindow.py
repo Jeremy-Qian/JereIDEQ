@@ -78,6 +78,7 @@ class MainWindow(QMainWindow):
             self.setWindowTitle(title)
             self.setWindowFilePath(file_path if file_path else "")
             self.setWindowModified(is_modified)
+            self.notebook.SetPageModified(index, is_modified)
 
     def on_tab_close_requested(self, index: int):
         if 0 <= index < len(self._tabs_data):
@@ -126,6 +127,7 @@ class MainWindow(QMainWindow):
                     data["original_content"] = data["editor"].toPlainText()
                     file_name = os.path.basename(data["file_path"])
                     self.notebook.SetPageText(index, file_name)
+                    self.notebook.SetPageModified(index, False)
                 except Exception as e:
                     QMessageBox.critical(self, "Error", f"Could not save file: {e}")
             else:
@@ -162,7 +164,8 @@ class MainWindow(QMainWindow):
             file_name = os.path.basename(data["file_path"]) if data["file_path"] else "untitled"
             title = f"JereIDE - {file_name}{' *' if is_modified else ''}"
             self.setWindowTitle(title)
-            self.notebook.SetPageText(index, f"{file_name}{' *' if is_modified else ''}")
+            self.notebook.SetPageText(index, file_name)
+            self.notebook.SetPageModified(index, is_modified)
 
     def open_file(self):
         file_path, _ = QFileDialog.getOpenFileName(
