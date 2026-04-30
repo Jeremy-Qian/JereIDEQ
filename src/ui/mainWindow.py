@@ -3,6 +3,7 @@ from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QFileDialog, QM
 from ui.codeEditor import QCodeEditor
 from ui.statusBar import StatusBar
 from ui.tabs import JereIDEBook
+from ui.menu import MenuBar
 
 
 class MainWindow(QMainWindow):
@@ -141,50 +142,8 @@ class MainWindow(QMainWindow):
                 self.notebook.SetPageText(index, os.path.basename(file_path))
 
     def setup_menu(self):
-        menu_bar = self.menuBar()
-        file_menu = menu_bar.addMenu("&File")
-
-        new_action = file_menu.addAction("&New")
-        new_action.setShortcut("Ctrl+N")
-        new_action.triggered.connect(self.new_file)
-
-        open_action = file_menu.addAction("&Open")
-        open_action.setShortcut("Ctrl+O")
-        open_action.triggered.connect(self.open_file)
-
-        save_action = file_menu.addAction("&Save")
-        save_action.setShortcut("Ctrl+S")
-        save_action.triggered.connect(self.save_file)
-
-        save_as_action = file_menu.addAction("Save &As...")
-        save_as_action.triggered.connect(self.save_as_file)
-
-        file_menu.addSeparator()
-
-        exit_action = file_menu.addAction("E&xit")
-        exit_action.triggered.connect(self.close)
-
-        options_menu = menu_bar.addMenu("&Options")
-
-        self.auto_indent_action = options_menu.addAction("&Auto Indent")
-        self.auto_indent_action.setCheckable(True)
-        self.auto_indent_action.setChecked(self.auto_indent_enabled)
-        self.auto_indent_action.triggered.connect(self.toggle_auto_indent)
-
-        self.line_numbers_action = options_menu.addAction("&Line Numbers")
-        self.line_numbers_action.setCheckable(True)
-        self.line_numbers_action.setChecked(self.line_numbers_enabled)
-        self.line_numbers_action.triggered.connect(self.toggle_line_numbers)
-
-        self.auto_pairing_action = options_menu.addAction("&Auto Pairing")
-        self.auto_pairing_action.setCheckable(True)
-        self.auto_pairing_action.setChecked(self.auto_pairing_enabled)
-        self.auto_pairing_action.triggered.connect(self.toggle_auto_pairing)
-
-        self.wrap_action = options_menu.addAction("&Word Wrap")
-        self.wrap_action.setCheckable(True)
-        self.wrap_action.setChecked(self.wrap_enabled)
-        self.wrap_action.triggered.connect(self.toggle_wrap)
+        self.menu_bar = MenuBar(self)
+        self.menu_bar.setup()
 
     def new_file(self):
         self._create_new_tab()
@@ -243,26 +202,26 @@ class MainWindow(QMainWindow):
             self._save_as_current_tab(idx)
 
     def toggle_auto_indent(self):
-        self.auto_indent_enabled = self.auto_indent_action.isChecked()
+        self.auto_indent_enabled = self.menu_bar.auto_indent_action.isChecked()
         idx = self.notebook.GetSelection()
         if 0 <= idx < len(self._tabs_data):
             self._tabs_data[idx]["editor"].auto_indent_enabled = self.auto_indent_enabled
 
     def toggle_line_numbers(self):
-        self.line_numbers_enabled = self.line_numbers_action.isChecked()
+        self.line_numbers_enabled = self.menu_bar.line_numbers_action.isChecked()
         idx = self.notebook.GetSelection()
         if 0 <= idx < len(self._tabs_data):
             self._tabs_data[idx]["editor"].set_line_numbers_enabled(self.line_numbers_enabled)
 
     def toggle_auto_pairing(self):
-        self.auto_pairing_enabled = self.auto_pairing_action.isChecked()
+        self.auto_pairing_enabled = self.menu_bar.auto_pairing_action.isChecked()
         idx = self.notebook.GetSelection()
         if 0 <= idx < len(self._tabs_data):
             self._tabs_data[idx]["editor"].auto_pairing_enabled = self.auto_pairing_enabled
             self.on_tab_changed(idx)
 
     def toggle_wrap(self):
-        self.wrap_enabled = self.wrap_action.isChecked()
+        self.wrap_enabled = self.menu_bar.wrap_action.isChecked()
         idx = self.notebook.GetSelection()
         if 0 <= idx < len(self._tabs_data):
             self._tabs_data[idx]["editor"].set_word_wrap(self.wrap_enabled)
