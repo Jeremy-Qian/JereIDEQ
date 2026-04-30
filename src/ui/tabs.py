@@ -15,7 +15,8 @@ from const.theme import (
     TAB_SELECTED_BG,
     TAB_UNSELECTED_BG,
     TAB_BORDER,
-    TAB_TEXT,
+    TAB_SELECTED_TEXT,
+    TAB_UNSELECTED_TEXT,
     TAB_CLOSE_HOVER_BG,
 )
 
@@ -97,7 +98,8 @@ class JereIDETab(QWidget):
         if self.is_modified:
             font.setItalic(True)
             painter.setFont(font)
-        painter.setPen(QColor(TAB_TEXT))
+        text_color = QColor(TAB_SELECTED_TEXT) if self.is_selected else QColor(TAB_UNSELECTED_TEXT)
+        painter.setPen(text_color)
         display_label = f"{self.label}*" if self.is_modified else self.label
         painter.drawText(text_x, (height // 2) + 4, display_label)
 
@@ -112,7 +114,7 @@ class JereIDETab(QWidget):
         if self._is_tab_hovered:
             close_rect = self._close_button_rect
             inset = 2
-            painter.setPen(QColor(TAB_TEXT))
+            painter.setPen(text_color)
             painter.drawLine(
                 close_rect.x() + inset, close_rect.y() + inset,
                 close_rect.x() + close_rect.width() - inset, close_rect.y() + close_rect.height() - inset
