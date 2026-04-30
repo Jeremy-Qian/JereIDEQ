@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from PySide6.QtCore import Qt, Signal, QRect
-from PySide6.QtGui import QPainter, QColor, QMouseEvent, QPaintEvent, QFontMetrics
+from PySide6.QtCore import Qt, Signal, QRect, QPoint
+from PySide6.QtGui import QPainter, QColor, QMouseEvent, QPaintEvent, QFontMetrics, QPolygon
 from PySide6.QtWidgets import (
     QHBoxLayout,
     QStackedWidget,
@@ -22,6 +22,64 @@ from const.theme import (
     TAB_UNSELECTED_CLOSE_HOVER_BG,
     TAB_SEPARATOR,
 )
+
+
+class TabScrollArrow(QWidget):
+    """A scroll arrow button for the tab bar."""
+
+    clicked = Signal(bool)
+
+    def __init__(self, parent: QWidget, left: bool = True):
+        super().__init__(parent)
+        self.left = left
+        self._is_hovered = False
+        self.setFixedWidth(20)
+        self.setMouseTracking(True)
+
+    def paintEvent(self, event: QPaintEvent) -> None:
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        width = self.width()
+        height = self.height()
+        center_y = height // 2
+
+        if self._is_hovered:
+            painter.setPen(Qt.PenStyle.NoPen)
+            painter.setBrush(QColor(TAB_UNSELECTED_CLOSE_HOVER_BG))
+            painter.drawRect(0, 0, width, height)
+
+        painter.setPen(QColor(TAB_UNSELECTED_TEXT))
+        painter.setBrush(QColor(TAB_UNSELECTED_TEXT))
+
+        if self.left:
+            points = [
+                (width - 6, center_y - 4),
+                (width - 10, center_y),
+                (width - 6, center_y + 4),
+            ]
+        else:
+            points = [
+                (6, center_y - 4),
+                (10, center_y),
+                (6, center_y + 4),
+            ]
+        polygon = QPolygon([QPoint(x, y) for x, y in points])
+        painter.drawPolygon(polygon)
+        painter.end()
+
+    def mouseMoveEvent(self, event: QMouseEvent) -> None:
+        if not self._is_hovered:
+            self._is_hovered = True
+            self.update()
+
+    def leaveEvent(self, event) -> None:
+        if self._is_hovered:
+            self._is_hovered = False
+            self.update()
+
+    def mousePressEvent(self, event: QMouseEvent) -> None:
+        if event.button() == Qt.MouseButton.LeftButton:
+            self.clicked.emit(self.left)
 
 
 class JereIDETab(QWidget):
@@ -161,6 +219,7 @@ class JereIDEBook(QWidget):
         super().__init__(parent)
         self._tabs: list[JereIDETab] = []
         self._current_selection = -1
+        self._scroll_offset = 0
 
         main_layout = QVBoxLayout(self)
         main_layout.setContentsMargins(0, 0, 0, 0)
@@ -174,6 +233,15 @@ class JereIDEBook(QWidget):
         self._tab_bar_layout = QHBoxLayout(self._tab_bar_widget)
         self._tab_bar_layout.setContentsMargins(0, 0, 0, 0)
         self._tab_bar_layout.setSpacing(0)
+
+        self._left_arrow = TabScrollArrow(self._tab_bar_widget, True)
+        self._left_arrow.clicked.connect(self._on_scroll_arrow_clicked)
+        self._tab_bar_layout.addWidget(self._left_arrow)
+
+        self._right_arrow = TabScrollArrow(self._tab_bar_widget, False)
+        self._right_arrow.clicked.connect(self._on_scroll_arrow_clicked)
+        self._tab_bar_layout.addWidget(self._right_arrow)
+
         self._tab_bar_layout.addStretch()
 
         self._stacked_widget = QStackedWidget()
@@ -286,3 +354,10 @@ class JereIDEBook(QWidget):
     def _on_tab_close_clicked(self, index: int) -> None:
         """Handle tab close button click events."""
         self.page_close_requested.emit(index)
+
+    def _on_scroll_arrow_clicked(self, left: bool) -> None:
+        """Handle scroll arrow click events."""
+        if left:
+            self._scroll_offset = max(0, self._scroll_offset - 1)
+        else:
+            self._scroll_offset += 1
