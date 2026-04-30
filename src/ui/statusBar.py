@@ -1,13 +1,13 @@
 
-from PySide6.QtWidgets import QWidget, QHBoxLayout, QPushButton
+from PySide6.QtWidgets import QFrame, QHBoxLayout, QPushButton
 from const.theme import STATUS_BAR_BG, STATUS_BAR_HEIGHT
 
 
-class StatusBar(QWidget):
+class StatusBar(QFrame):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setFixedHeight(STATUS_BAR_HEIGHT)
-        self.setStyleSheet(f"background-color: {STATUS_BAR_BG}; border: 1px solid #ccc;")
+        self.setStyleSheet(f"background-color: {STATUS_BAR_BG}; border-top: 1px solid #ccc;")
 
         layout = QHBoxLayout(self)
         layout.setContentsMargins(5, 0, 5, 0)
@@ -20,6 +20,7 @@ class StatusBar(QWidget):
             "color: #666; font-size: 12px; padding: 0 5px; text-align: left; }"
             "QPushButton:disabled { color: #666; }"
         )
+
         layout.addWidget(self._position_button)
         layout.addStretch()
 
