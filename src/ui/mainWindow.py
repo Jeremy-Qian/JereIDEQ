@@ -35,6 +35,7 @@ class MainWindow(QMainWindow):
         self.setup_menu()
 
         self.notebook.page_changed.connect(self.on_tab_changed)
+        self.notebook.page_changed.connect(self._on_page_changed_for_cursor)
         self.notebook.page_close_requested.connect(self.on_tab_close_requested)
 
         self._tabs_data = []
@@ -52,6 +53,7 @@ class MainWindow(QMainWindow):
             "original_content": ""
         })
         editor.textChanged.connect(lambda: self.on_text_changed(editor))
+        editor.cursorPositionChanged.connect(self._on_cursor_position_changed)
 
     def _get_current_tab_data(self):
         idx = self.notebook.GetSelection()
@@ -188,6 +190,7 @@ class MainWindow(QMainWindow):
                 "original_content": content
             })
             editor.textChanged.connect(lambda: self.on_text_changed(editor))
+            editor.cursorPositionChanged.connect(self._on_cursor_position_changed)
             editor.setPlainText(content)
             self.on_tab_changed(idx)
 
@@ -277,6 +280,22 @@ class MainWindow(QMainWindow):
             from PySide6.QtCore import Qt
             event = QKeyEvent(QKeyEvent.Type.KeyPress, Qt.Key_F, Qt.ControlModifier, "")
             editor.keyPressEvent(event)
+
+    def _on_page_changed_for_cursor(self, index: int):
+        if 0 <= index < len(self._tabs_data):
+            editor = self._tabs_data[index]["editor"]
+            self._update_cursor_position(editor)
+
+    def _on_cursor_position_changed(self):
+        editor = self.sender()
+        if editor:
+            self._update_cursor_position(editor)
+
+    def _update_cursor_position(self, editor):
+        cursor = editor.textCursor()
+        line = cursor.blockNumber() + 1
+        col = cursor.columnNumber() + 1
+        self.status_bar.update_position(line, col)
 
     def replace(self):
         # Replace would require a custom dialog - for now just focus the editor
