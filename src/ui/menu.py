@@ -8,6 +8,7 @@ class MenuBar:
         self.line_numbers_action = None
         self.auto_pairing_action = None
         self.wrap_action = None
+        self.syntax_highlighting_action = None
 
     def setup(self):
         menu_bar = self.window.menuBar()
@@ -40,7 +41,12 @@ class MenuBar:
     def _setup_options_menu(self, menu_bar):
         options_menu = menu_bar.addMenu("&Options")
 
-        self.auto_indent_action = options_menu.addAction("&Auto Indent")
+        self.syntax_highlighting_action = options_menu.addAction("&Syntax Highlighting")
+        self.syntax_highlighting_action.setCheckable(True)
+        self.syntax_highlighting_action.setChecked(self.window.syntax_highlighting_enabled)
+        self.syntax_highlighting_action.triggered.connect(self.window.toggle_syntax_highlighting)
+
+        self.auto_indent_action = options_menu.addAction("Auto &Indent")
         self.auto_indent_action.setCheckable(True)
         self.auto_indent_action.setChecked(self.window.auto_indent_enabled)
         self.auto_indent_action.triggered.connect(self.window.toggle_auto_indent)
@@ -50,7 +56,7 @@ class MenuBar:
         self.line_numbers_action.setChecked(self.window.line_numbers_enabled)
         self.line_numbers_action.triggered.connect(self.window.toggle_line_numbers)
 
-        self.auto_pairing_action = options_menu.addAction("&Auto Pairing")
+        self.auto_pairing_action = options_menu.addAction("Auto &Pairing")
         self.auto_pairing_action.setCheckable(True)
         self.auto_pairing_action.setChecked(self.window.auto_pairing_enabled)
         self.auto_pairing_action.triggered.connect(self.window.toggle_auto_pairing)

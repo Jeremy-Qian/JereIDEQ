@@ -26,6 +26,7 @@ class QCodeEditor(QPlainTextEdit, AutoPairingMixin):
         self.setLineWrapMode(QPlainTextEdit.NoWrap)
 
         # Apply Python syntax highlighting
+        self.syntax_highlighter_enabled = True
         self.syntax_highlighter = PythonSyntaxHighlighter(self.document())
 
         self.blockCountChanged.connect(self.update_line_number_area_width)
@@ -34,6 +35,10 @@ class QCodeEditor(QPlainTextEdit, AutoPairingMixin):
 
         self.update_line_number_area_width(0)
         self.highlight_current_line()
+
+    def set_syntax_highlighting_enabled(self, enabled: bool):
+        self.syntax_highlighter_enabled = enabled
+        self.syntax_highlighter.setDocument(self.document() if enabled else None)
 
     def keyPressEvent(self, event):
         auto_indent = AutoIndent(self)

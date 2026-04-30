@@ -21,6 +21,7 @@ class MainWindow(QMainWindow):
         self.notebook = JereIDEBook(None)
         layout.addWidget(self.notebook)
 
+        self.syntax_highlighting_enabled = True
         self.auto_indent_enabled = True
         self.line_numbers_enabled = True
         self.auto_pairing_enabled = True
@@ -225,3 +226,9 @@ class MainWindow(QMainWindow):
         idx = self.notebook.GetSelection()
         if 0 <= idx < len(self._tabs_data):
             self._tabs_data[idx]["editor"].set_word_wrap(self.wrap_enabled)
+
+    def toggle_syntax_highlighting(self):
+        self.syntax_highlighting_enabled = self.menu_bar.syntax_highlighting_action.isChecked()
+        idx = self.notebook.GetSelection()
+        if 0 <= idx < len(self._tabs_data):
+            self._tabs_data[idx]["editor"].set_syntax_highlighting_enabled(self.syntax_highlighting_enabled)
