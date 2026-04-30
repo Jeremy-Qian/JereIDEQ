@@ -83,7 +83,6 @@ class JereIDETab(QWidget):
 
         if not self.is_selected:
             painter.setPen(QColor(TAB_BORDER))
-            painter.drawLine(0, height - 1, width - 1, height - 1)
             painter.drawLine(0, 0, 0, height - 1)
             painter.drawLine(width, 0, width, height - 1)
         else:
@@ -166,7 +165,10 @@ class JereIDEBook(QWidget):
         main_layout.setSpacing(0)
 
         self._tab_bar_widget = QWidget()
-        self._tab_bar_widget.setStyleSheet(f"QWidget {{ background-color: {TAB_STRIP_BG}; }}")
+        self._tab_bar_widget.setFixedHeight(30)
+        self._tab_bar_widget.setStyleSheet(
+            f"QWidget {{ background-color: {TAB_STRIP_BG}; border-bottom: 1px solid {TAB_BORDER}; }}"
+        )
         self._tab_bar_layout = QHBoxLayout(self._tab_bar_widget)
         self._tab_bar_layout.setContentsMargins(0, 0, 0, 0)
         self._tab_bar_layout.setSpacing(0)
