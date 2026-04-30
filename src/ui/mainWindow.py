@@ -167,7 +167,7 @@ class MainWindow(QMainWindow):
     def open_file(self):
         file_path, _ = QFileDialog.getOpenFileName(
             self, "Open File", "",
-            "Text Files (*.txt);;Python Files (*.py);;All Files (*)"
+            "All Files (*)"
         )
         if file_path:
             try:
