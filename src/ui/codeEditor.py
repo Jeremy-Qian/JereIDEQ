@@ -197,6 +197,7 @@ class QCodeEditor(QPlainTextEdit):
     def lineNumberAreaPaintEvent(self, event):
         painter = QPainter(self.line_number_area)
         painter.fillRect(event.rect(), QColor(LINE_NUMBER_BG))
+        painter.setFont(self.font())
 
         block = self.firstVisibleBlock()
         block_number = block.blockNumber()
