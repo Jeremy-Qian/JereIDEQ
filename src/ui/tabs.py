@@ -98,7 +98,8 @@ class JereIDETab(QWidget):
             font.setItalic(True)
             painter.setFont(font)
         painter.setPen(QColor(TAB_TEXT))
-        painter.drawText(text_x, (height // 2) + 4, self.label)
+        display_label = f"{self.label}*" if self.is_modified else self.label
+        painter.drawText(text_x, (height // 2) + 4, display_label)
 
         self._text_right = text_x + text_width
 
