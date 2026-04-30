@@ -9,6 +9,7 @@ from PySide6.QtWidgets import (
     QStackedWidget,
     QVBoxLayout,
     QWidget,
+    QFrame,
 )
 
 from const.theme import (
@@ -225,10 +226,10 @@ class JereIDEBook(QWidget):
         main_layout.setContentsMargins(0, 0, 0, 0)
         main_layout.setSpacing(0)
 
-        self._tab_bar_widget = QWidget()
+        self._tab_bar_widget = QFrame()
         self._tab_bar_widget.setFixedHeight(30)
         self._tab_bar_widget.setStyleSheet(
-            f"QWidget {{ background-color: {TAB_STRIP_BG}; border-bottom: 1px solid {TAB_BORDER}; }}"
+            f"QFrame {{ background-color: {TAB_STRIP_BG}; border-bottom: 1px solid {TAB_BORDER}; }}"
         )
         self._tab_bar_layout = QHBoxLayout(self._tab_bar_widget)
         self._tab_bar_layout.setContentsMargins(0, 0, 0, 0)
