@@ -17,7 +17,8 @@ from const.theme import (
     TAB_BORDER,
     TAB_SELECTED_TEXT,
     TAB_UNSELECTED_TEXT,
-    TAB_CLOSE_HOVER_BG,
+    TAB_SELECTED_CLOSE_HOVER_BG,
+    TAB_UNSELECTED_CLOSE_HOVER_BG,
 )
 
 
@@ -107,7 +108,9 @@ class JereIDETab(QWidget):
 
         if self._is_close_hovered:
             hover_rect = self._close_hover_rect
-            painter.setBrush(QColor(TAB_CLOSE_HOVER_BG))
+            close_hover_color = TAB_SELECTED_CLOSE_HOVER_BG if self.is_selected else TAB_UNSELECTED_CLOSE_HOVER_BG
+            hover_bg = QColor(close_hover_color)
+            painter.setBrush(hover_bg)
             painter.setPen(Qt.PenStyle.NoPen)
             painter.drawRoundedRect(hover_rect, 3, 3)
 
