@@ -79,16 +79,7 @@ class JereIDETab(QWidget):
         height = self.height()
 
         background_color = QColor(TAB_SELECTED_BG) if self.is_selected else QColor(TAB_UNSELECTED_BG)
-        painter.fillRect(0, 0, width, height, background_color)
-
-        if not self.is_selected:
-            painter.setPen(QColor(TAB_BORDER))
-            painter.drawLine(0, 0, 0, height - 1)
-            painter.drawLine(width, 0, width, height - 1)
-        else:
-            painter.setPen(QColor(TAB_BORDER))
-            painter.drawLine(0, 0, 0, height - 1)
-            painter.drawLine(width, 0, width, height - 1)
+        painter.fillRect(0, 0, width, height - 1, background_color)
 
         fm = QFontMetrics(self.font())
         text_width = fm.horizontalAdvance(self.label)
