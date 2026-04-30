@@ -20,6 +20,7 @@ from const.theme import (
     TAB_UNSELECTED_TEXT,
     TAB_SELECTED_CLOSE_HOVER_BG,
     TAB_UNSELECTED_CLOSE_HOVER_BG,
+    TAB_SEPARATOR,
 )
 
 
@@ -29,10 +30,11 @@ class JereIDETab(QWidget):
     clicked = Signal(int)
     close_clicked = Signal(int)
 
-    def __init__(self, parent: QWidget, label: str, index: int):
+    def __init__(self, parent: QWidget, label: str, index: int, notebook: "JereIDEBook" = None):
         super().__init__(parent)
         self.label = label
         self.index = index
+        self.notebook = notebook
         self.is_selected = False
         self.is_modified = False
         self._is_close_hovered = False
@@ -117,6 +119,15 @@ class JereIDETab(QWidget):
                 close_rect.x() + close_rect.width() - inset, close_rect.y() + inset,
                 close_rect.x() + inset, close_rect.y() + close_rect.height() - inset
             )
+
+        next_tab = self.notebook._tabs[self.index + 1] if self.notebook and self.index + 1 < len(self.notebook._tabs) else None
+        if not self.is_selected:
+            painter.setPen(QColor(TAB_SEPARATOR))
+            if next_tab and not next_tab.is_selected:
+                painter.drawLine(width - 1, 6, width - 1, height - 6)
+            elif not next_tab:
+                painter.drawLine(width - 1, 6, width - 1, height - 6)
+
         painter.end()
 
     def mousePressEvent(self, event: QMouseEvent) -> None:
@@ -184,7 +195,7 @@ class JereIDEBook(QWidget):
     def AddPage(self, page_widget: QWidget, title: str, select: bool = False) -> bool:
         """Add a new page to the notebook."""
         index = len(self._tabs)
-        tab = JereIDETab(self._tab_bar_widget, title, index)
+        tab = JereIDETab(self._tab_bar_widget, title, index, self)
         tab.clicked.connect(self._on_tab_clicked)
         tab.close_clicked.connect(self._on_tab_close_clicked)
 
