@@ -141,7 +141,6 @@ class JereIDEBook(QWidget):
 
     def __init__(self, parent: QWidget):
         super().__init__(parent)
-        self.setStyleSheet("QWidget { border: none; }")
         self._tabs: list[JereIDETab] = []
         self._current_selection = -1
 

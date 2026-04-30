@@ -28,9 +28,9 @@ class QCodeEditor(QPlainTextEdit):
         font = QFont(EDITOR_FONT_FAMILY, EDITOR_FONT_SIZE)
         font.setStyleHint(QFont.Monospace)
         self.setFont(font)
-        self.setStyleSheet("QPlainTextEdit { border: none; background-color: white; }")
 
         self.setTabStopDistance(4 * self.fontMetrics().horizontalAdvance(' '))
+        self.setLineWrapMode(QPlainTextEdit.NoWrap)
 
         # Apply Python syntax highlighting
         self.syntax_highlighter = PythonSyntaxHighlighter(self.document())
@@ -135,6 +135,13 @@ class QCodeEditor(QPlainTextEdit):
         self.line_numbers_enabled = enabled
         self.line_number_area.setVisible(enabled)
         self.update_line_number_area_width(0)
+
+    def set_word_wrap(self, enabled: bool):
+        from PySide6.QtWidgets import QPlainTextEdit
+        if enabled:
+            self.setLineWrapMode(QPlainTextEdit.WidgetWidth)
+        else:
+            self.setLineWrapMode(QPlainTextEdit.NoWrap)
 
     def _on_cursor_moved(self):
         if not self.auto_pairing_enabled:

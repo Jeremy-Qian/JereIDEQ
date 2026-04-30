@@ -24,6 +24,7 @@ class MainWindow(QMainWindow):
         self.auto_indent_enabled = True
         self.line_numbers_enabled = True
         self.auto_pairing_enabled = True
+        self.wrap_enabled = False
 
         self.status_bar = StatusBar()
         layout.addWidget(self.status_bar)
@@ -181,6 +182,11 @@ class MainWindow(QMainWindow):
         self.auto_pairing_action.setChecked(self.auto_pairing_enabled)
         self.auto_pairing_action.triggered.connect(self.toggle_auto_pairing)
 
+        self.wrap_action = options_menu.addAction("&Word Wrap")
+        self.wrap_action.setCheckable(True)
+        self.wrap_action.setChecked(self.wrap_enabled)
+        self.wrap_action.triggered.connect(self.toggle_wrap)
+
     def new_file(self):
         self._create_new_tab()
         idx = self.notebook.GetSelection()
@@ -255,3 +261,9 @@ class MainWindow(QMainWindow):
         if 0 <= idx < len(self._tabs_data):
             self._tabs_data[idx]["editor"].auto_pairing_enabled = self.auto_pairing_enabled
             self.on_tab_changed(idx)
+
+    def toggle_wrap(self):
+        self.wrap_enabled = self.wrap_action.isChecked()
+        idx = self.notebook.GetSelection()
+        if 0 <= idx < len(self._tabs_data):
+            self._tabs_data[idx]["editor"].set_word_wrap(self.wrap_enabled)
