@@ -13,7 +13,7 @@ class StatusBar(QFrame):
         layout.setContentsMargins(5, 0, 5, 0)
         layout.setSpacing(5)
 
-        self._position_button = QPushButton("Ln 1, Col 1")
+        self._position_button = QPushButton("1:1")
         self._position_button.setFixedHeight(STATUS_BAR_HEIGHT - 4)
         self._position_button.setStyleSheet(
             "QPushButton { background-color: transparent; border: none; "
@@ -25,4 +25,4 @@ class StatusBar(QFrame):
         layout.addStretch()
 
     def update_position(self, line: int, column: int):
-        self._position_button.setText(f"Ln {line}, Col {column}")
+        self._position_button.setText(f"{line}:{column}")
