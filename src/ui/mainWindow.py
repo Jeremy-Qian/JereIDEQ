@@ -107,8 +107,6 @@ class MainWindow(QMainWindow):
             self._tabs_data.pop(index)
         for i in range(len(self._tabs_data)):
             self.notebook.SetPageText(i, self._get_tab_title(i))
-        if self.notebook.GetPageCount() == 0:
-            self._create_new_tab()
 
     def _get_tab_title(self, index: int):
         if 0 <= index < len(self._tabs_data):

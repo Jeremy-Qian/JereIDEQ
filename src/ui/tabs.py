@@ -277,6 +277,7 @@ class JereIDEBook(QWidget):
         if self._current_selection == -1 or select:
             self.SelectTab(index)
 
+        self._tab_bar_widget.show()
         return True
 
     def SetPageText(self, index: int, title: str) -> bool:
@@ -347,6 +348,7 @@ class JereIDEBook(QWidget):
             self.SelectTab(self._current_selection)
         else:
             self._current_selection = -1
+            self._tab_bar_widget.hide()
 
     def _on_tab_clicked(self, index: int) -> None:
         """Handle tab click events."""
