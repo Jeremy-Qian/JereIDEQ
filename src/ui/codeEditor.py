@@ -22,6 +22,7 @@ class QCodeEditor(QPlainTextEdit, AutoPairingMixin):
         font.setStyleHint(QFont.Monospace)
         self.setFont(font)
 
+        self.setFrameShape(QPlainTextEdit.NoFrame)
         self.setTabStopDistance(4 * self.fontMetrics().horizontalAdvance(' '))
         self.setLineWrapMode(QPlainTextEdit.NoWrap)
 
