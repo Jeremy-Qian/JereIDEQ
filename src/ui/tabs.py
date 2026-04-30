@@ -124,9 +124,9 @@ class JereIDETab(QWidget):
         if not self.is_selected:
             painter.setPen(QColor(TAB_SEPARATOR))
             if next_tab and not next_tab.is_selected:
-                painter.drawLine(width - 1, 6, width - 1, height - 6)
+                painter.drawLine(width - 1, 10, width - 1, height - 10)
             elif not next_tab:
-                painter.drawLine(width - 1, 6, width - 1, height - 6)
+                painter.drawLine(width - 1, 10, width - 1, height - 10)
 
         painter.end()
 
