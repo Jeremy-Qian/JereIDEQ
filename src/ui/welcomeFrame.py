@@ -101,7 +101,7 @@ class WelcomeFrame(QFrame):
             "Open File", "⌘O", "folder", self._on_open_file
         )
         self._add_action(
-            "Open Command Palette", "⌘⇧P", "cmd", self._on_command_palette, enabled=False
+            "Open Command Palette    ", "⌘⇧P", "cmd", self._on_command_palette, enabled=False
         )
 
         actions_layout.addWidget(section_label)
@@ -135,7 +135,7 @@ class WelcomeFrame(QFrame):
         action_layout.addWidget(shortcut_label)
 
         if enabled:
-            action_widget.setStyleSheet(f"""
+            action_widget.setStyleSheet("""
                 QWidget {{
                     background-color: transparent;
                     padding: 8px 16px;
@@ -149,7 +149,7 @@ class WelcomeFrame(QFrame):
             action_widget.mousePressEvent = lambda event: callback()
         else:
             label.setStyleSheet(f"color: {WELCOME_TEXT_SECONDARY};")
-            action_widget.setStyleSheet(f"""
+            action_widget.setStyleSheet("""
                 QWidget {{
                     background-color: transparent;
                     padding: 8px 16px;

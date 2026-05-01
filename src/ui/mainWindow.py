@@ -1,5 +1,5 @@
 import os
-from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QFileDialog, QMessageBox, QHBoxLayout, QScrollArea, QSplitter
+from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QFileDialog, QMessageBox
 from ui.codeEditor import QCodeEditor
 from ui.statusBar import StatusBar
 from ui.tabs import JereIDEBook
@@ -57,7 +57,6 @@ class MainWindow(QMainWindow):
 
         editor = QCodeEditor()
         self.notebook.AddPage(editor, title)
-        tab_index = self.notebook.GetPageCount() - 1
         self._tabs_data.append({
             "editor": editor,
             "file_path": file_path,
@@ -83,7 +82,6 @@ class MainWindow(QMainWindow):
         if 0 <= index < len(self._tabs_data):
             data = self._tabs_data[index]
             file_path = data["file_path"]
-            is_untitled = data["is_untitled"]
             file_name = os.path.basename(file_path) if file_path else "untitled"
             is_modified = data["editor"].toPlainText() != data["original_content"]
             title = f"JereIDE - {file_name}{' *' if is_modified else ''}"
