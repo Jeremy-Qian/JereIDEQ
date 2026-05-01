@@ -101,7 +101,7 @@ class WelcomeFrame(QFrame):
             "Open File", "⌘O", "folder", self._on_open_file
         )
         self._add_action(
-            "Open Command Palette", "⌘⇧P", "cmd", self._on_command_palette
+            "Open Command Palette", "⌘⇧P", "cmd", self._on_command_palette, enabled=False
         )
 
         actions_layout.addWidget(section_label)
@@ -114,7 +114,7 @@ class WelcomeFrame(QFrame):
 
         main_layout.addStretch()
 
-    def _add_action(self, text: str, shortcut: str, icon_type: str, callback):
+    def _add_action(self, text: str, shortcut: str, icon_type: str, callback, enabled: bool = True):
         action_widget = QWidget()
         action_layout = QHBoxLayout(action_widget)
         action_layout.setContentsMargins(0, 0, 0, 0)
@@ -134,18 +134,28 @@ class WelcomeFrame(QFrame):
         action_layout.addWidget(label)
         action_layout.addWidget(shortcut_label)
 
-        action_widget.setStyleSheet(f"""
-            QWidget {{
-                background-color: transparent;
-                padding: 8px 16px;
-                min-width: 200px;
-            }}
-            QWidget:hover {{
-                background-color: #F0F0F0;
-            }}
-        """)
-        action_widget.setCursor(Qt.CursorShape.PointingHandCursor)
-        action_widget.mousePressEvent = lambda event: callback()
+        if enabled:
+            action_widget.setStyleSheet(f"""
+                QWidget {{
+                    background-color: transparent;
+                    padding: 8px 16px;
+                    min-width: 200px;
+                }}
+                QWidget:hover {{
+                    background-color: #F0F0F0;
+                }}
+            """)
+            action_widget.setCursor(Qt.CursorShape.PointingHandCursor)
+            action_widget.mousePressEvent = lambda event: callback()
+        else:
+            label.setStyleSheet(f"color: {WELCOME_TEXT_SECONDARY};")
+            action_widget.setStyleSheet(f"""
+                QWidget {{
+                    background-color: transparent;
+                    padding: 8px 16px;
+                    min-width: 200px;
+                }}
+            """)
 
         self._actions.append(action_widget)
 
