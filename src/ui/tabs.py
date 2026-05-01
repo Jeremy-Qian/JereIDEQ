@@ -243,7 +243,7 @@ class JereIDEBook(QWidget):
         self._right_arrow.clicked.connect(self._on_scroll_arrow_clicked)
         self._tab_bar_layout.addWidget(self._right_arrow)
 
-        self._tabs_container = QWidget()
+        self._tabs_container = QFrame()
         self._tabs_container_layout = QHBoxLayout(self._tabs_container)
         self._tabs_container_layout.setContentsMargins(0, 0, 0, 0)
         self._tabs_container_layout.setSpacing(0)
