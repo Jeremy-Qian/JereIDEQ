@@ -277,6 +277,7 @@ class JereIDEBook(QWidget):
         if self._current_selection == -1 or select:
             self.SelectTab(index)
 
+        self._update_arrow_states()
         self._tab_bar_widget.show()
         return True
 
@@ -325,6 +326,8 @@ class JereIDEBook(QWidget):
             self._current_selection = index
             self.page_changed.emit(index)
 
+        self._update_arrow_states()
+
     def CloseTab(self, index: int) -> None:
         """Close and remove the tab at the given index."""
         if index < 0 or index >= len(self._tabs):
@@ -350,6 +353,8 @@ class JereIDEBook(QWidget):
             self._current_selection = -1
             self._tab_bar_widget.hide()
 
+        self._update_arrow_states()
+
     def _on_tab_clicked(self, index: int) -> None:
         """Handle tab click events."""
         self.SelectTab(index)
@@ -360,7 +365,22 @@ class JereIDEBook(QWidget):
 
     def _on_scroll_arrow_clicked(self, left: bool) -> None:
         """Handle scroll arrow click events."""
+        if not self._tabs:
+            return
+
+        current = self._current_selection
+
         if left:
-            self._scroll_offset = max(0, self._scroll_offset - 1)
+            if current > 0:
+                self.SelectTab(current - 1)
         else:
-            self._scroll_offset += 1
+            if current < len(self._tabs) - 1:
+                self.SelectTab(current + 1)
+
+    def _update_arrow_states(self) -> None:
+        """Update enabled state of scroll arrows based on current tab position."""
+        has_tabs = bool(self._tabs)
+        current = self._current_selection
+
+        self._left_arrow.setEnabled(has_tabs and current > 0)
+        self._right_arrow.setEnabled(has_tabs and current < len(self._tabs) - 1)
