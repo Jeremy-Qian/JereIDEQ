@@ -30,9 +30,11 @@ class WelcomeFrame(QFrame):
         self._logo.setPixmap(pixmap)
         self._logo.setAlignment(Qt.AlignCenter)
 
-        self._label = QLabel("needs implementation")
+        self._label = QLabel("Welcome to JereIDE.")
         self._label.setAlignment(Qt.AlignCenter)
-        self._label.setStyleSheet("color: #888; font-size: 18px;")
+        self._label.setStyleSheet("color: #000; font-size: 18px;")
+
+
 
         layout.addWidget(self._logo)
         layout.addWidget(self._label)

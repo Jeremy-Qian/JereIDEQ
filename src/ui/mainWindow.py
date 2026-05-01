@@ -121,6 +121,7 @@ class MainWindow(QMainWindow):
             self.welcome_frame.show()
             self.notebook.hide()
             self.status_bar.update_position(1, 1)
+            self.setWindowTitle("JereIDE")
 
     def _get_tab_title(self, index: int):
         if 0 <= index < len(self._tabs_data):
