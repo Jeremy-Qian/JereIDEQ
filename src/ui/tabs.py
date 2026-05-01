@@ -340,6 +340,9 @@ class JereIDEBook(QWidget):
             self._current_selection = index
             self.page_changed.emit(index)
 
+        if 0 <= index < len(self._tabs):
+            self._scroll_area.ensureWidgetVisible(self._tabs[index])
+
         self._update_arrow_states()
 
     def CloseTab(self, index: int) -> None:
