@@ -3,7 +3,7 @@ from PySide6.QtWidgets import QFrame, QLabel, QVBoxLayout
 from PySide6.QtGui import QPixmap, QPainter
 from PySide6.QtSvg import QSvgRenderer
 from const.theme import EDITOR_BG
-from utils.paths import LOGO_PATH
+from const.paths import LOGO_PATH
 
 
 class WelcomeFrame(QFrame):
