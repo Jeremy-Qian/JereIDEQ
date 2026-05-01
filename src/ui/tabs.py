@@ -291,6 +291,7 @@ class JereIDEBook(QWidget):
         if self._current_selection == -1 or select:
             self.SelectTab(index)
         else:
+            self._update_container_min_width()
             self._scroll_to_tab(index)
 
         self._update_arrow_states()
@@ -334,7 +335,27 @@ class JereIDEBook(QWidget):
     def _scroll_to_tab(self, index: int) -> None:
         """Scroll the tab at the given index into view."""
         if 0 <= index < len(self._tabs):
-            QTimer.singleShot(0, lambda: self._scroll_area.ensureWidgetVisible(self._tabs[index]))
+            tab = self._tabs[index]
+            self._update_container_min_width()
+            QTimer.singleShot(50, lambda t=tab: self._do_scroll_to_tab(t))
+
+    def _update_container_min_width(self) -> None:
+        """Update the container's minimum width to allow scrolling."""
+        total_width = sum(t.width() for t in self._tabs) if self._tabs else 0
+        self._tabs_container.setMinimumWidth(total_width)
+
+    def _do_scroll_to_tab(self, tab: JereIDETab) -> None:
+        scroll_bar = self._scroll_area.horizontalScrollBar()
+        viewport_width = self._scroll_area.viewport().width()
+        x = tab.x()
+        width = tab.width()
+        current_value = scroll_bar.value()
+        max_value = scroll_bar.maximum()
+
+        if x < current_value:
+            scroll_bar.setValue(max(0, x))
+        elif x + width > current_value + viewport_width:
+            scroll_bar.setValue(min(max_value, x + width - viewport_width))
 
     def SelectTab(self, index: int) -> None:
         """Select the tab at the given index."""
