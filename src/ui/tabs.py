@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from PySide6.QtCore import Qt, Signal, QRect, QPoint
+from PySide6.QtCore import Qt, Signal, QRect, QPoint, QTimer
 from PySide6.QtGui import QPainter, QColor, QMouseEvent, QPaintEvent, QFontMetrics, QPolygon
 from PySide6.QtWidgets import (
     QHBoxLayout,
@@ -290,6 +290,8 @@ class JereIDEBook(QWidget):
 
         if self._current_selection == -1 or select:
             self.SelectTab(index)
+        else:
+            self._scroll_to_tab(index)
 
         self._update_arrow_states()
         self._tab_bar_widget.show()
@@ -329,6 +331,11 @@ class JereIDEBook(QWidget):
         if 0 <= index < len(self._tabs):
             self.page_close_requested.emit(index)
 
+    def _scroll_to_tab(self, index: int) -> None:
+        """Scroll the tab at the given index into view."""
+        if 0 <= index < len(self._tabs):
+            QTimer.singleShot(0, lambda: self._scroll_area.ensureWidgetVisible(self._tabs[index]))
+
     def SelectTab(self, index: int) -> None:
         """Select the tab at the given index."""
         for i, tab in enumerate(self._tabs):
@@ -340,9 +347,7 @@ class JereIDEBook(QWidget):
             self._current_selection = index
             self.page_changed.emit(index)
 
-        if 0 <= index < len(self._tabs):
-            self._scroll_area.ensureWidgetVisible(self._tabs[index])
-
+        self._scroll_to_tab(index)
         self._update_arrow_states()
 
     def CloseTab(self, index: int) -> None:
