@@ -26,6 +26,9 @@ class MainWindow(QMainWindow):
         self.welcome_frame = WelcomeFrame()
         layout.addWidget(self.welcome_frame)
 
+        self.welcome_frame.newFileRequested.connect(self._create_new_tab)
+        self.welcome_frame.openFileRequested.connect(self.open_file)
+
         self.syntax_highlighting_enabled = True
         self.auto_indent_enabled = True
         self.line_numbers_enabled = True

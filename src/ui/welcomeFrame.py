@@ -1,6 +1,6 @@
 from PySide6.QtCore import Qt, QSize, Signal
 from PySide6.QtWidgets import (
-    QFrame, QLabel, QVBoxLayout, QHBoxLayout, QPushButton, QWidget
+    QFrame, QLabel, QVBoxLayout, QHBoxLayout, QWidget
 )
 from PySide6.QtGui import QPixmap, QPainter, QFont
 from PySide6.QtSvg import QSvgRenderer
@@ -13,8 +13,7 @@ from const.paths import LOGO_PATH
 
 class WelcomeFrame(QFrame):
     newFileRequested = Signal()
-    openProjectRequested = Signal()
-    cloneRepositoryRequested = Signal()
+    openFileRequested = Signal()
     commandPaletteRequested = Signal()
 
     def __init__(self, parent=None):
@@ -99,10 +98,7 @@ class WelcomeFrame(QFrame):
             "New File", "⌘N", "+", self._on_new_file
         )
         self._add_action(
-            "Open Project", "⌘O", "folder", self._on_open_project
-        )
-        self._add_action(
-            "Clone Repository", "", "git", self._on_clone_repository
+            "Open File", "⌘O", "folder", self._on_open_file
         )
         self._add_action(
             "Open Command Palette", "⌘⇧P", "cmd", self._on_command_palette
@@ -119,54 +115,45 @@ class WelcomeFrame(QFrame):
         main_layout.addStretch()
 
     def _add_action(self, text: str, shortcut: str, icon_type: str, callback):
-        action_widget = QPushButton()
-        action_widget.setText(f"  {text}")
+        action_widget = QWidget()
+        action_layout = QHBoxLayout(action_widget)
+        action_layout.setContentsMargins(0, 0, 0, 0)
+        action_layout.setSpacing(0)
+
+        label = QLabel(f"  {text}")
         action_font = QFont()
         action_font.setPointSize(14)
-        action_widget.setFont(action_font)
+        label.setFont(action_font)
+        label.setStyleSheet(f"color: {WELCOME_TEXT_PRIMARY};")
+
+        shortcut_label = QLabel(shortcut)
+        shortcut_label.setFont(action_font)
+        shortcut_label.setStyleSheet(f"color: {WELCOME_TEXT_SECONDARY};")
+        shortcut_label.setAlignment(Qt.AlignRight)
+
+        action_layout.addWidget(label)
+        action_layout.addWidget(shortcut_label)
+
         action_widget.setStyleSheet(f"""
-            QPushButton {{
+            QWidget {{
                 background-color: transparent;
-                border: none;
-                color: {WELCOME_TEXT_PRIMARY};
-                font-size: 14px;
                 padding: 8px 16px;
-                text-align: left;
                 min-width: 200px;
             }}
-            QPushButton:hover {{
+            QWidget:hover {{
                 background-color: #F0F0F0;
             }}
         """)
-        action_widget.clicked.connect(callback)
-
-        if shortcut:
-            action_widget.setText(f"  {text}          {shortcut}")
-            action_widget.setStyleSheet(f"""
-                QPushButton {{
-                    background-color: transparent;
-                    border: none;
-                    color: {WELCOME_TEXT_PRIMARY};
-                    font-size: 14px;
-                    padding: 8px 16px;
-                    text-align: left;
-                    min-width: 250px;
-                }}
-                QPushButton:hover {{
-                    background-color: #F0F0F0;
-                }}
-            """)
+        action_widget.setCursor(Qt.CursorShape.PointingHandCursor)
+        action_widget.mousePressEvent = lambda event: callback()
 
         self._actions.append(action_widget)
 
     def _on_new_file(self):
         self.newFileRequested.emit()
 
-    def _on_open_project(self):
-        self.openProjectRequested.emit()
-
-    def _on_clone_repository(self):
-        self.cloneRepositoryRequested.emit()
+    def _on_open_file(self):
+        self.openFileRequested.emit()
 
     def _on_command_palette(self):
         self.commandPaletteRequested.emit()
