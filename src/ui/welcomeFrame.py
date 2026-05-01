@@ -3,7 +3,7 @@ from PySide6.QtWidgets import QFrame, QLabel, QVBoxLayout
 from PySide6.QtGui import QPixmap, QPainter
 from PySide6.QtSvg import QSvgRenderer
 from const.theme import EDITOR_BG
-import os
+from utils.paths import LOGO_PATH
 
 
 class WelcomeFrame(QFrame):
@@ -16,14 +16,11 @@ class WelcomeFrame(QFrame):
         layout.setSpacing(15)
         layout.addStretch()
 
-        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-        logo_path = os.path.join(base_dir, "src", "icons", "logo.svg")
-
         self._logo = QLabel()
         pixmap = QPixmap(100, 100)
         pixmap.fill(Qt.GlobalColor.transparent)
 
-        renderer = QSvgRenderer(logo_path)
+        renderer = QSvgRenderer(LOGO_PATH)
 
         painter = QPainter(pixmap)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
