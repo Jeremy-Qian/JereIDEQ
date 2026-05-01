@@ -36,6 +36,11 @@ class WelcomeFrame(QFrame):
         logo_layout.setSpacing(15)
         logo_layout.setAlignment(Qt.AlignCenter)
 
+        title_tagline_layout = QVBoxLayout()
+        title_tagline_layout.setSpacing(5)
+        title_tagline_layout.setAlignment(Qt.AlignCenter)
+
+
         self._logo = QLabel()
         pixmap = QPixmap(80, 80)
         pixmap.fill(Qt.GlobalColor.transparent)
@@ -61,23 +66,18 @@ class WelcomeFrame(QFrame):
         tagline_font = QFont()
         tagline_font.setItalic(True)
         tagline_font.setPointSize(14)
-        self._tagline = QLabel("The editor for what's next")
+        self._tagline = QLabel("the fast simple code editor")
         self._tagline.setFont(tagline_font)
         self._tagline.setAlignment(Qt.AlignCenter)
         self._tagline.setStyleSheet(f"color: {WELCOME_TEXT_SECONDARY};")
 
+        title_tagline_layout.addWidget(self._title)
+        title_tagline_layout.addWidget(self._tagline)
+
         logo_layout.addWidget(self._logo)
-        logo_layout.addWidget(self._title)
+        logo_layout.addLayout(title_tagline_layout)
 
         header_layout.addLayout(logo_layout)
-        header_layout.addWidget(self._tagline)
-
-        self._divider = QFrame()
-        self._divider.setFrameShape(QFrame.Shape.HLine)
-        self._divider.setStyleSheet(
-            f"background-color: {WELCOME_DIVIDER}; border: none;"
-        )
-        self._divider.setFixedHeight(1)
 
         actions_widget = QWidget()
         actions_layout = QVBoxLayout(actions_widget)
@@ -101,7 +101,7 @@ class WelcomeFrame(QFrame):
             "Open File", "⌘O", "folder", self._on_open_file
         )
         self._add_action(
-            "Open Command Palette    ", "⌘⇧P", "cmd", self._on_command_palette, enabled=False
+            "Open Command Palette\t  ", "⌘⇧P", "cmd", self._on_command_palette, enabled=False
         )
 
         actions_layout.addWidget(section_label)
@@ -109,7 +109,6 @@ class WelcomeFrame(QFrame):
             actions_layout.addWidget(action)
 
         main_layout.addWidget(header_widget, 0, Qt.AlignHCenter)
-        main_layout.addWidget(self._divider, 0, Qt.AlignHCenter)
         main_layout.addWidget(actions_widget, 0, Qt.AlignHCenter)
 
         main_layout.addStretch()
