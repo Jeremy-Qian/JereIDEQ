@@ -239,6 +239,10 @@ class JereIDEBook(QWidget):
         self._left_arrow.clicked.connect(self._on_scroll_arrow_clicked)
         self._tab_bar_layout.addWidget(self._left_arrow)
 
+        self._right_arrow = TabScrollArrow(self._tab_bar_widget, False)
+        self._right_arrow.clicked.connect(self._on_scroll_arrow_clicked)
+        self._tab_bar_layout.addWidget(self._right_arrow)
+
         self._tabs_container = QWidget()
         self._tabs_container_layout = QHBoxLayout(self._tabs_container)
         self._tabs_container_layout.setContentsMargins(0, 0, 0, 0)
@@ -254,10 +258,6 @@ class JereIDEBook(QWidget):
         self._scroll_area.horizontalScrollBar().valueChanged.connect(self._update_arrow_states)
 
         self._tab_bar_layout.addWidget(self._scroll_area, 1)
-
-        self._right_arrow = TabScrollArrow(self._tab_bar_widget, False)
-        self._right_arrow.clicked.connect(self._on_scroll_arrow_clicked)
-        self._tab_bar_layout.addWidget(self._right_arrow)
 
         self._stacked_widget = QStackedWidget()
         self._stacked_widget.setStyleSheet("QStackedWidget { border: none; background-color: white; }")
@@ -378,20 +378,21 @@ class JereIDEBook(QWidget):
         self.page_close_requested.emit(index)
 
     def _on_scroll_arrow_clicked(self, left: bool) -> None:
-        """Handle scroll arrow click events."""
-        scroll_amount = 150
-        current_scroll = self._scroll_area.horizontalScrollBar().value()
+        """Handle scroll arrow click events - switch to adjacent tab."""
+        if not self._tabs:
+            return
 
-        if left:
-            self._scroll_area.horizontalScrollBar().setValue(current_scroll - scroll_amount)
-        else:
-            self._scroll_area.horizontalScrollBar().setValue(current_scroll + scroll_amount)
+        current = self._current_selection
+
+        if left and current > 0:
+            self.SelectTab(current - 1)
+        elif not left and current < len(self._tabs) - 1:
+            self.SelectTab(current + 1)
 
     def _update_arrow_states(self) -> None:
-        """Update enabled state of scroll arrows based on scroll position."""
-        scroll_bar = self._scroll_area.horizontalScrollBar()
-        max_scroll = scroll_bar.maximum()
-        current_scroll = scroll_bar.value()
+        """Update enabled state of scroll arrows based on current tab position."""
+        has_tabs = bool(self._tabs)
+        current = self._current_selection
 
-        self._left_arrow.setEnabled(current_scroll > 0)
-        self._right_arrow.setEnabled(current_scroll < max_scroll)
+        self._left_arrow.setEnabled(has_tabs and current > 0)
+        self._right_arrow.setEnabled(has_tabs and current < len(self._tabs) - 1)
