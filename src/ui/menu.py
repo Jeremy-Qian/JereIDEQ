@@ -9,12 +9,14 @@ class MenuBar:
         self.auto_pairing_action = None
         self.wrap_action = None
         self.syntax_highlighting_action = None
+        self.toggle_full_screen_action = None
 
     def setup(self):
         menu_bar = self.window.menuBar()
         self._setup_file_menu(menu_bar)
         self._setup_edit_menu(menu_bar)
         self._setup_options_menu(menu_bar)
+        self._setup_view_menu(menu_bar)
 
     def _setup_edit_menu(self, menu_bar):
         edit_menu = menu_bar.addMenu("&Edit")
@@ -107,3 +109,9 @@ class MenuBar:
         self.wrap_action.setCheckable(True)
         self.wrap_action.setChecked(self.window.wrap_enabled)
         self.wrap_action.triggered.connect(self.window.toggle_wrap)
+
+    def _setup_view_menu(self, menu_bar):
+        view_menu = menu_bar.addMenu("&View")
+        self.toggle_full_screen_action = view_menu.addAction("Toggle Full Screen")
+        self.toggle_full_screen_action.setShortcut("Meta+F")  # Cmd+F for macOS
+        self.toggle_full_screen_action.triggered.connect(self.window.toggle_full_screen)

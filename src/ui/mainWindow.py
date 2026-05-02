@@ -1,5 +1,6 @@
 import os
 from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QFileDialog, QMessageBox
+from PySide6.QtCore import Qt
 from ui.codeEditor import QCodeEditor
 from ui.statusBar import StatusBar
 from ui.tabs import JereIDEBook
@@ -34,6 +35,7 @@ class MainWindow(QMainWindow):
         self.line_numbers_enabled = True
         self.auto_pairing_enabled = True
         self.wrap_enabled = False
+        self.full_screen_enabled = False
 
         self.status_bar = StatusBar()
         layout.addWidget(self.status_bar)
@@ -323,3 +325,18 @@ class MainWindow(QMainWindow):
         editor = self._get_current_editor()
         if editor:
             editor.setFocus()
+
+    def toggle_full_screen(self):
+        # Toggle the fullscreen state internally
+        self.full_screen_enabled = not self.full_screen_enabled
+        
+        if self.full_screen_enabled:
+            # Use native fullscreen method
+            self.showFullScreen()
+            # On macOS, sometimes show() is needed after setting fullscreen
+            self.show()
+        else:
+            # Use native normal screen method
+            self.showNormal()
+            # On macOS, sometimes show() is needed after setting normal
+            self.show()
