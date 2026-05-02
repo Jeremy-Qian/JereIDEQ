@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QFrame, QHBoxLayout, QPushButton
 from PySide6.QtCore import QSize
-from icons.sfsymbols import get_sf_qicon
+from icons.sfSymbols import get_sf_qicon
 from const.theme import STATUS_BAR_BG, STATUS_BAR_HEIGHT
 
 
