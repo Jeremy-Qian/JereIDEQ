@@ -24,6 +24,7 @@ from const.theme import (
     TAB_UNSELECTED_CLOSE_HOVER_BG,
     TAB_SEPARATOR,
 )
+from config.config_manager import config_manager
 
 
 class TabScrollArrow(QWidget):
@@ -101,7 +102,8 @@ class JereIDETab(QWidget):
         self._is_tab_hovered = False
         self._text_right = 0
 
-        self.setFixedHeight(30)
+        tab_height = config_manager.get_config_value('theme', 'tabs.height', 30)
+        self.setFixedHeight(tab_height)
         self.setMouseTracking(True)
         self._update_width()
 

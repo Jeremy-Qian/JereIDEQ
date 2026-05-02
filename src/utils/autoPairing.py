@@ -3,22 +3,27 @@ from PySide6.QtGui import QTextCursor, QColor
 from PySide6.QtWidgets import QTextEdit
 
 from const.theme import PAIR_HIGHLIGHT
+from config.config_manager import config_manager
 
 
 class AutoPairingMixin:
     """Mixin class to add auto-pairing functionality to QPlainTextEdit."""
 
-    PAIRS = {
-        '(': ')',
-        '[': ']',
-        '{': '}',
-        '"': '"',
-        "'": "'",
-    }
+    def __init__(self):
+        """Initialize auto-pairing with configuration."""
+        # Load pairs from configuration
+        self.PAIRS = config_manager.get_config_value('editor', 'auto_pairing.pairs', {
+            '(': ')',
+            '[': ']',
+            '{': '}',
+            '"': '"',
+            "'": "'",
+        })
 
     def init_auto_pairing(self):
         """Initialize auto-pairing state. Call from __init__ of the mixin class."""
-        self.auto_pairing_enabled = True
+        # Check if auto-pairing is enabled in configuration
+        self.auto_pairing_enabled = config_manager.get_config_value('editor', 'auto_pairing.enabled', True)
         self._highlighted_pair = None
         self.cursorPositionChanged.connect(self._on_pair_cursor_moved)
 

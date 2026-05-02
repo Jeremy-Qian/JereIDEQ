@@ -8,6 +8,7 @@ from utils.autoPairing import AutoPairingMixin
 from const.theme import EDITOR_FONT_FAMILY, EDITOR_FONT_SIZE, LINE_NUMBER_BG, LINE_NUMBER_TEXT, CURRENT_LINE_BG
 from const.theme import SYNTAX_KEYWORD, SYNTAX_STRING, SYNTAX_NUMBER, SYNTAX_COMMENT
 from const.theme import SYNTAX_BUILTIN, SYNTAX_DECORATOR, SYNTAX_CLASS_DEF, SYNTAX_FUNCTION_DEF
+from config.config_manager import config_manager
 
 
 class QCodeEditor(QPlainTextEdit, AutoPairingMixin):
@@ -15,7 +16,7 @@ class QCodeEditor(QPlainTextEdit, AutoPairingMixin):
         super().__init__(parent)
         self.line_number_area = LineNumberArea(self)
         self.auto_indent_enabled = True
-        self.line_numbers_enabled = True
+        self.line_numbers_enabled = config_manager.get_config_value('editor', 'line_numbers.enabled', True)
         self.init_auto_pairing()
 
         font = QFont(EDITOR_FONT_FAMILY, EDITOR_FONT_SIZE)
@@ -23,7 +24,8 @@ class QCodeEditor(QPlainTextEdit, AutoPairingMixin):
         self.setFont(font)
 
         self.setFrameShape(QPlainTextEdit.NoFrame)
-        self.setTabStopDistance(4 * self.fontMetrics().horizontalAdvance(' '))
+        tab_size = config_manager.get_config_value('editor', 'font.tab_size', 4)
+        self.setTabStopDistance(tab_size * self.fontMetrics().horizontalAdvance(' '))
         self.setLineWrapMode(QPlainTextEdit.NoWrap)
 
         # Apply Python syntax highlighting
@@ -67,7 +69,8 @@ class QCodeEditor(QPlainTextEdit, AutoPairingMixin):
         while max_blocks >= 10:
             max_blocks //= 10
             digits += 1
-        space = 15 + self.fontMetrics().horizontalAdvance('9') * digits
+        minimum_width = config_manager.get_config_value('editor', 'line_numbers.minimum_width', 15)
+        space = minimum_width + self.fontMetrics().horizontalAdvance('9') * digits
         return space
 
     def update_line_number_area_width(self, _):

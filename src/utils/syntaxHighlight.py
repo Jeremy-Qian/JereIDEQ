@@ -2,30 +2,33 @@ from PySide6.QtCore import QRegularExpression
 from PySide6.QtGui import QFont, QColor, QSyntaxHighlighter, QTextCharFormat
 from const.theme import SYNTAX_KEYWORD, SYNTAX_STRING, SYNTAX_NUMBER, SYNTAX_COMMENT
 from const.theme import SYNTAX_BUILTIN, SYNTAX_DECORATOR, SYNTAX_CLASS_DEF, SYNTAX_FUNCTION_DEF
+from config.config_manager import config_manager
 
 
 class PythonSyntaxHighlighter(QSyntaxHighlighter):
-    PYTHON_KEYWORDS = [
-        'False', 'None', 'True', 'and', 'as', 'assert', 'async', 'await',
-        'break', 'class', 'continue', 'def', 'del', 'elif', 'else', 'except',
-        'finally', 'for', 'from', 'global', 'if', 'import', 'in', 'is',
-        'lambda', 'nonlocal', 'not', 'or', 'pass', 'raise', 'return', 'try',
-        'while', 'with', 'yield'
-    ]
-
-    PYTHON_BUILTINS = [
-        'abs', 'all', 'any', 'bin', 'bool', 'bytes', 'callable', 'chr', 'dict',
-        'dir', 'divmod', 'enumerate', 'eval', 'exec', 'filter', 'float', 'format',
-        'frozenset', 'getattr', 'globals', 'hasattr', 'hash', 'help', 'hex', 'id',
-        'input', 'int', 'isinstance', 'issubclass', 'iter', 'len', 'list', 'locals',
-        'map', 'max', 'min', 'next', 'object', 'oct', 'open', 'ord', 'pow',
-        'print', 'property', 'range', 'repr', 'reversed', 'round', 'set',
-        'setattr', 'slice', 'sorted', 'staticmethod', 'str', 'sum', 'super', 'tuple',
-        'type', 'vars', 'zip', '__import__'
-    ]
-
     def __init__(self, parent):
         super().__init__(parent)
+        # Load syntax highlighting configuration
+        self.syntax_highlighting_enabled = config_manager.get_config_value('editor', 'syntax_highlighting.enabled', True)
+        self.PYTHON_KEYWORDS = config_manager.get_config_value('editor', 'syntax_highlighting.keywords', [
+            'False', 'None', 'True', 'and', 'as', 'assert', 'async', 'await',
+            'break', 'class', 'continue', 'def', 'del', 'elif', 'else', 'except',
+            'finally', 'for', 'from', 'global', 'if', 'import', 'in', 'is',
+            'lambda', 'nonlocal', 'not', 'or', 'pass', 'raise', 'return', 'try',
+            'while', 'with', 'yield'
+        ])
+
+        self.PYTHON_BUILTINS = config_manager.get_config_value('editor', 'syntax_highlighting.builtins', [
+            'abs', 'all', 'any', 'bin', 'bool', 'bytes', 'callable', 'chr', 'dict',
+            'dir', 'divmod', 'enumerate', 'eval', 'exec', 'filter', 'float', 'format',
+            'frozenset', 'getattr', 'globals', 'hasattr', 'hash', 'help', 'hex', 'id',
+            'input', 'int', 'isinstance', 'issubclass', 'iter', 'len', 'list', 'locals',
+            'map', 'max', 'min', 'next', 'object', 'oct', 'open', 'ord', 'pow',
+            'print', 'property', 'range', 'repr', 'reversed', 'round', 'set',
+            'setattr', 'slice', 'sorted', 'staticmethod', 'str', 'sum', 'super', 'tuple',
+            'type', 'vars', 'zip', '__import__'
+        ])
+
         self._highlighting_rules = []
         self._build_highlighting_rules()
 
