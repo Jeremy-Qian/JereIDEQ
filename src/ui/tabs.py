@@ -275,7 +275,7 @@ class JereIDEBook(QWidget):
             return self._stacked_widget.widget(index)
         return None
 
-    def AddPage(self, page_widget: QWidget, title: str, select: bool = False) -> bool:
+    def AddPage(self, page_widget: QWidget, title: str, select: bool = True) -> bool:
         """Add a new page to the notebook."""
         index = len(self._tabs)
         tab = JereIDETab(self._tabs_container, title, index, self)
