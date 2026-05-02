@@ -6,6 +6,7 @@ from ui.statusBar import StatusBar
 from ui.tabs import JereIDEBook
 from ui.menu import MenuBar
 from ui.welcomeFrame import WelcomeFrame
+from ui.bottomPanel import BottomPanel
 
 
 class MainWindow(QMainWindow):
@@ -37,7 +38,11 @@ class MainWindow(QMainWindow):
         self.wrap_enabled = False
         self.full_screen_enabled = False
 
+        self.bottom_panel = BottomPanel()
+        layout.addWidget(self.bottom_panel)
+
         self.status_bar = StatusBar()
+        self.status_bar._dock_button.clicked.connect(self.toggle_bottom_panel)
         layout.addWidget(self.status_bar)
 
         self.setCentralWidget(container)
@@ -325,6 +330,10 @@ class MainWindow(QMainWindow):
         editor = self._get_current_editor()
         if editor:
             editor.setFocus()
+
+    def toggle_bottom_panel(self):
+        """Toggle the bottom panel (dock) visibility."""
+        self.bottom_panel.toggle()
 
     def toggle_full_screen(self):
         # Toggle the fullscreen state internally
