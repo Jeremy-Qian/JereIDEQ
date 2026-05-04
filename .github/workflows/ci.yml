@@ -25,5 +25,6 @@ jobs:
         python -m py_compile src/ui/mainWindow.py
         python -m py_compile src/ui/statusBar.py
         python -m py_compile src/JereIDE.py
+        python -m py_compile src/tkinterJereIDE.py
         python -m py_compile src/const/theme.py
         echo "All Python files passed syntax check"
