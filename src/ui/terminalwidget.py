@@ -88,9 +88,12 @@ class TerminalWidget(QTextEdit):
 
     def render_screen(self):
 
-        # We moved the drawing logic to its own function so the timer can call it
+        at_bottom = self.is_scrolled_to_bottom()
 
         lines = self.screen.display.copy()
+
+        while lines and lines[-1].strip() == '':
+            lines.pop()
 
 
 
@@ -100,13 +103,9 @@ class TerminalWidget(QTextEdit):
 
 
 
-        # Only draw the cursor if the "switch" is currently True
-
         if self.cursor_visible and y < len(lines):
 
             line = lines[y]
-
-            # Use '⎸' for thin line or '█' for block
 
             lines[y] = line[:x] + "█" + line[x+1:]
 
@@ -114,7 +113,15 @@ class TerminalWidget(QTextEdit):
 
         self.setPlainText("\n".join(lines))
 
-        self.moveCursor(QTextCursor.MoveOperation.End)
+        if at_bottom:
+            self.moveCursor(QTextCursor.MoveOperation.End)
+        else:
+            self.moveCursor(QTextCursor.MoveOperation.Start)
+
+    def is_scrolled_to_bottom(self):
+
+        scroll_bar = self.verticalScrollBar()
+        return scroll_bar.value() >= scroll_bar.maximum() - 10
 
 
 
